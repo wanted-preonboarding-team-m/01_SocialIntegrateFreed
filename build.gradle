@@ -13,6 +13,7 @@ java {
 }
 
 configurations {
+    asciidoctorExt // html 자동 변경 사용 설정
     compileOnly {
         extendsFrom annotationProcessor
     }
@@ -31,12 +32,19 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
     implementation 'org.springframework.boot:spring-boot-starter-web'
+    //p6spy 설치 (3.x는 1.9.0버전 사용해야함)
+    implementation "com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.5.6"
+
     compileOnly 'org.projectlombok:lombok'
     runtimeOnly 'com.mysql:mysql-connector-j'
     annotationProcessor 'org.projectlombok:lombok'
+    // .adocs를 html로 자동 변화
+    asciidoctorExt 'org.springframework.restdocs:spring-restdocs-asciidoctor'
+
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
     testImplementation 'org.springframework.security:spring-security-test'
+    testImplementation 'com.h2database:h2'
 }
 
 tasks.named('test') {
@@ -47,4 +55,32 @@ tasks.named('test') {
 tasks.named('asciidoctor') {
     inputs.dir snippetsDir
     dependsOn test
+    configurations 'asciidoctorExt' // html 자동 변경 사용
+    baseDirFollowsSourceFile() // .adoc 파일에서 다른.adoc 파일을 include하여 사용할 때 경로를 동일하게 baseDir로 설정
+}
+
+asciidoctor.doFirst {
+    delete file('src/main/resources/static/docs') //실행 전 이전 html 삭제
+}
+
+// build/docs/asciidoc 에 생성된 html 문서를 src/main/resources/static/docs 에 복사해온다.
+task createDocument(type: Copy) {
+    dependsOn asciidoctor // asciidoctor 후 실행
+
+    from file("build/docs/asciidoc")
+    into file("src/main/resources/static")
+}
+
+//jar의 static/docs에 문서 복사
+bootJar {
+    dependsOn createDocument
+
+    from("${asciidoctor.outputDir}") {
+        into 'static/docs'
+    }
+}
+
+//빌드전 createDocument 실행
+build {
+    dependsOn createDocument
 }
