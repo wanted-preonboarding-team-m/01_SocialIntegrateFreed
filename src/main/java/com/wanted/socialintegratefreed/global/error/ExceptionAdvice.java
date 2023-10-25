@@ -25,7 +25,7 @@ public class ExceptionAdvice {
     String errorMessage = getErrorMessage(e);
 
     return ResponseEntity.badRequest()
-        .body(ApiResponse.errorForm(errorMessage));
+        .body(ApiResponse.toErrorForm(errorMessage));
   }
 
   /**
@@ -39,7 +39,7 @@ public class ExceptionAdvice {
     String errorMessage = getErrorMessage(e.getInvalidValue(), e.getFieldName(), e.getMessage());
 
     return ResponseEntity.status(e.getHttpStatus())
-        .body(ApiResponse.errorForm(errorMessage));
+        .body(ApiResponse.toErrorForm(errorMessage));
   }
 
   /**
