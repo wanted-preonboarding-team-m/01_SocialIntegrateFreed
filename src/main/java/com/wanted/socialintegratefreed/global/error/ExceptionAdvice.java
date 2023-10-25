@@ -65,7 +65,7 @@ public class ExceptionAdvice {
   /**
    * 메시지 포멧팅
    */
-  public static String getErrorMessage(String invalidValue, String errorField,
+  private static String getErrorMessage(String invalidValue, String errorField,
       String errorMessage) {
     return String.format("[%s] %s: %s", invalidValue, errorField, errorMessage);
   }
