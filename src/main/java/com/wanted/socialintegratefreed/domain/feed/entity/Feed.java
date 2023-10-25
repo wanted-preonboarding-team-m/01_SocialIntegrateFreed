@@ -15,8 +15,8 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -73,7 +73,7 @@ public class Feed extends BaseTimeEntity {
 
   // 'TagMatching'엔티티와 일대다 관계 설정
   @OneToMany(mappedBy = "feed")
-  private Set<TagMatching> tagMatchings = new HashSet<>();
+  private List<TagMatching> tagMatchings = new ArrayList<>();
 
   @Builder
   public Feed(String title, String content, Integer viewCount, Integer likeCount, Integer shareCount, FeedType type, User user) {

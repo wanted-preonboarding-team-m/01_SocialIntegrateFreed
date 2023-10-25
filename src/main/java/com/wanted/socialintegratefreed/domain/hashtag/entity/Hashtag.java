@@ -9,8 +9,8 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -36,7 +36,7 @@ public class Hashtag extends BaseTimeEntity {
 
   // 'TagMatching'엔티티와 일대다 관계 설정
   @OneToMany(mappedBy = "hashtag")
-  private Set<TagMatching> tagMatchings = new HashSet<>();
+  private List<TagMatching> tagMatchings = new ArrayList<>();
 
   @Builder
   public Hashtag(String name) {
