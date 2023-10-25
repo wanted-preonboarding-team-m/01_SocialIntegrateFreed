@@ -36,13 +36,13 @@ public class TagMatching {
   // 부모 엔티티인 'Feed'와의 관계 설정
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "feed_id")
-  @Cascade({CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH, CascadeType.REFRESH})
+  @Cascade(CascadeType.ALL)
   private Feed feed;
 
   // 부모 엔티티인 'Hashtag'와의 관계 설정
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "hashtag_id")
-  @Cascade({CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH, CascadeType.REFRESH})
+  @Cascade(CascadeType.ALL)
   private Hashtag hashtag;
 
   @Builder
