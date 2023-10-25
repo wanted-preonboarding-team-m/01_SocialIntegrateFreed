@@ -15,6 +15,9 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.filter.CharacterEncodingFilter;
 
+/**
+ * mockMvc를 사용할 때, 자동으로 rest docs 작성하게 한다.
+ */
 @Import(RestDocsConfiguration.class)
 @ExtendWith(RestDocumentationExtension.class)
 public abstract class AbstractRestDocsTests {

@@ -6,6 +6,9 @@ import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation;
 import org.springframework.restdocs.mockmvc.RestDocumentationResultHandler;
 import org.springframework.restdocs.operation.preprocess.Preprocessors;
 
+/**
+ * rest docs의 가독성을 높인다.
+ */
 @TestConfiguration
 public class RestDocsConfiguration {
 
