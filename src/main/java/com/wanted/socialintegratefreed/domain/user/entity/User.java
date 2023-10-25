@@ -1,7 +1,7 @@
 package com.wanted.socialintegratefreed.domain.user.entity;
 
-
 import com.wanted.socialintegratefreed.domain.user.constant.UserEnable;
+import com.wanted.socialintegratefreed.global.entity.BaseTimeEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
