@@ -18,8 +18,13 @@
 <img src="https://img.shields.io/badge/spring-6DB33F?style=for-the-badge&logo=spring&logoColor=white" alt="spring"/> <img src="https://img.shields.io/badge/spring data jpa-6DB33F?style=for-the-badge&logo=spring&logoColor=white" alt="spring data jpa"/> <img src="https://img.shields.io/badge/spring security-6DB33F?style=for-the-badge&logo=springSecurity&logoColor=white" alt="spring security"/> <img src="https://img.shields.io/badge/mysql-4479A1?style=for-the-badge&logo=mysql&logoColor=white" alt="mysql"/>
 
 ## 프로젝트 개요
-여러 SNS의 게시물들을 한번에 관리하는 애플리케이션입니다.
-해시태그로 원하는 게시물을 조회할 수 있으며, 좋아요 및 공유도 가능합니다.
+여러 SNS의 게시물들을 한번에 관리하는 서비스입니다.
+
+검색한 해시태그가 포함된 게시물들을 하나의 서비스에서 확인할 수 있습니다.
+
+이를 통해 본 서비스의 고객은 하나의 채널로 유저, 브랜드 등 SNS 노출 게시물 및 통계를 확인할 수 있습니다.
+
+좋아요, 공유 기능도 SNS를 각각 이용하지 않고 한번에 수행할 수 있습니다.
 
 ## 구현 기능 목록
 * 유저
@@ -30,8 +35,8 @@
 * 게시물
     * 게시물 목록
     * 게시물 상세
-    * 게시물 좋아요
-    * 게시물 공유
+    * 게시물 좋아요 (실제 연동은 구현되지 않았습니다.)
+    * 게시물 공유 (실제 연동은 구현되지 않았습니다.)
 
 * 통계
     * 해시태그를 날짜 혹은 시간으로 조회
