@@ -35,7 +35,7 @@ public class UserPrincipal implements UserDetails {
     public Collection<? extends GrantedAuthority> getAuthorities() {
         //loadByUserName으로 부터 받은 객체가 ENABLE인 부분을 Authority에 넣어줌으로써 권한이 부어됨을 인증
         Collection<GrantedAuthority> authorities = new ArrayList<>();
-        authorities.add(new SimpleGrantedAuthority("ROLE_" + user.getUserEnable()));
+        authorities.add(new SimpleGrantedAuthority("ROLE_" + user.getUserEnable().toString()));
         return authorities;
     }
 
