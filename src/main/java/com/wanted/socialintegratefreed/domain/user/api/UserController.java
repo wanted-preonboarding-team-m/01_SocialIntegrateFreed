@@ -26,6 +26,7 @@ public class UserController {
 
     private final UserService userService;
 
+    private static final String SUCCESS_MESSAGE = "정상 처리 되었습니다.";
 
     /**
      * signUp : 회원가입
@@ -55,7 +56,7 @@ public class UserController {
     public ResponseEntity<ApiResponse> verifyAuthenticationCode(
             final @RequestBody UserRequestAuthCodeDto userRequestAuthCodeDto, HttpServletRequest httpServletRequest) {
         userService.verifyAuthenticationCodeAndRequestInput(userRequestAuthCodeDto, httpServletRequest);
-        return ResponseEntity.ok(ApiResponse.toSuccessForm("정상 처리 되었습니다."));
+        return ResponseEntity.ok(ApiResponse.toSuccessForm(SUCCESS_MESSAGE));
     }
 
     /**
