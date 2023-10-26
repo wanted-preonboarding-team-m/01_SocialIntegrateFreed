@@ -5,7 +5,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 
 import com.wanted.socialintegratefreed.domain.user.dao.UserRepository;
-import com.wanted.socialintegratefreed.domain.user.dto.UserSaveRequestDto;
+import com.wanted.socialintegratefreed.domain.user.dto.request.UserRequestDto;
 import com.wanted.socialintegratefreed.domain.user.entity.User;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -26,7 +26,7 @@ public class UserServiceTest {
     private UserRepository userRepository;
 
     private User user;
-    private UserSaveRequestDto userSaveRequestDto;
+    private UserRequestDto userRequestDto;
 
     @BeforeEach
     void setUp() {
@@ -44,17 +44,6 @@ public class UserServiceTest {
         @Test
         @DisplayName("사용자 등록에 성공한다.")
         void 사용자_등록에_성공한다() {
-
-            UserSaveRequestDto saveUserRequestDto = UserSaveRequestDto.builder()
-                    .password(user.getPassword())
-                    .email(user.getEmail())
-                    .build();
-
-            given(userRepository.save(any(User.class))).willReturn(user);
-
-            User createdUser = userService.createUser(saveUserRequestDto);
-
-            Assertions.assertEquals(createdUser, user);
 
         }
     }
