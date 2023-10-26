@@ -4,6 +4,8 @@ server:
     context-path: /
     encoding:
       charset: utf-8
+    session:
+      timeout: 60
 
 spring:
   datasource:
@@ -21,3 +23,8 @@ decorator:
   datasource:
     p6spy:
       enable-logging: true
+
+jwt:
+  secret: socialIntegrateFreedwantedMsocialIntegrateFreedapplication2023secret
+  expired: 3600000
+
