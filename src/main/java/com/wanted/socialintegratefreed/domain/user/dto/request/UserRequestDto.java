@@ -7,12 +7,18 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 
+/**
+ * 회원가입 할때 사용하는 dto
+ */
 @Getter
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Builder
 public class UserRequestDto {
 
+    //만들 이메일
     private String email;
+
+    // 사용할 password
     private String password;
 
 
