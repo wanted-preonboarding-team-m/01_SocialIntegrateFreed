@@ -3,6 +3,8 @@ package com.wanted.socialintegratefreed.domain.user.config;
 import com.wanted.socialintegratefreed.domain.user.jwt.JwtAuthenticationFilter;
 import com.wanted.socialintegratefreed.domain.user.jwt.JwtTokenProvider;
 import com.wanted.socialintegratefreed.domain.user.constant.UserEnable;
+import com.wanted.socialintegratefreed.global.error.BusinessException;
+import com.wanted.socialintegratefreed.global.error.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -13,6 +15,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 /**
@@ -45,14 +48,17 @@ public class WebSecurityConfig {
                         // 스프링시큐리티가 세션을 생성 및 존재하지않게 설정
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(request ->
-                        request.anyRequest().permitAll())
-//                .authorizeHttpRequests(
-//                        //api/v1/board 는 USER_ENABLED한 사람만 요청이가능함
-//                        request -> request.requestMatchers("/api/v1/board").hasRole(
-//                                String.valueOf(UserEnable.USER_ENABLED)))
+                        request.requestMatchers("/api/v1/user/signUp", "/api/v1/user/verify-user-code",
+                                "/api/v1/user/login").permitAll())
+                .authorizeHttpRequests(
+                        //api/v1/board 는 USER_ENABLED한 사람만 요청이가능함
+                        request -> request.requestMatchers("/api/v1/board/**").hasRole(
+                                String.valueOf(UserEnable.USER_ENABLED)))
                 // 들어오는 요청에 대해서 헤더안에 있는 Jwt를 체크
-                .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider),
+                .addFilterAfter(new JwtAuthenticationFilter(jwtTokenProvider),
                         UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
+
+
 }
