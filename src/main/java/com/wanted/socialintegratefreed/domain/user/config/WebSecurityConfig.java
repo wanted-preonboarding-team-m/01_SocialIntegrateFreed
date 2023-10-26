@@ -48,7 +48,7 @@ public class WebSecurityConfig {
                         // 스프링시큐리티가 세션을 생성 및 존재하지않게 설정
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(request ->
-                        request.requestMatchers("/api/v1/user/signUp", "/api/v1/user/verify-user-code",
+                        request.requestMatchers("/api/v1/user/sign-up", "/api/v1/user/verify-user-code",
                                 "/api/v1/user/login").permitAll())
                 .authorizeHttpRequests(
                         //api/v1/board 는 USER_ENABLED한 사람만 요청이가능함
