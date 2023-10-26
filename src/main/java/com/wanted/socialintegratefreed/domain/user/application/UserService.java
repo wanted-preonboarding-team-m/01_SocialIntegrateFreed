@@ -17,6 +17,7 @@ import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -47,12 +48,12 @@ public class UserService {
     @Transactional
     public int signUp(UserRequestDto userSaveRequestDto, HttpServletRequest httpServletRequest) {
         Map<String, Object> userSessionMap = new HashMap<>();
-        duplicateEmail(userSaveRequestDto.getEmail()); // 이메일 중복체크
         User user = User.builder()
                 .email(userSaveRequestDto.getEmail())
                 .password(passwordEncoder.encode(userSaveRequestDto.getPassword()))
                 .userEnable(UserEnable.USER_DISABLED)
                 .build();
+        duplicateEmail(userSaveRequestDto.getEmail());
 
         User saveUser = userRepository.save(user); // 사용자 저장
         int authCode = generateAuthRandomNumber(); // 랜덤 6자리수 발급
@@ -155,8 +156,10 @@ public class UserService {
      * @param email dto 이메일 duplicateEmail: 중복된 이메일 찾아 없을시 예외 발생
      */
     public void duplicateEmail(String email) {
-        userRepository.findByEmail(email).orElseThrow(() -> new BusinessException(email, "email",
-                ErrorCode.DUPLICATE_EMAIL));
+        Optional<User> user = userRepository.findByEmail(email);
+        if (user.isPresent()) {
+            throw new BusinessException("email", email, ErrorCode.DUPLICATE_EMAIL);
+        }
     }
 
     /**
