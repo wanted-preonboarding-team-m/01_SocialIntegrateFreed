@@ -14,8 +14,11 @@ public class ApiResponse {
   private static final String STATUS_FAIL = "fail";
   private static final String STATUS_ERROR = "error";
 
+  // 상태 (성공,실패,에러)
   private String status;
+  // 실패/에러 메시지 (성공일시 null)
   private String message;
+  // 데이터 (실패/에러일 때 null)
   private Object data;
 
   /**
@@ -24,7 +27,7 @@ public class ApiResponse {
    * @param data 데이터 내용
    * @return 성공 APIResponse
    */
-  public static ApiResponse successForm(Object data) {
+  public static ApiResponse toSuccessForm(Object data) {
     return new ApiResponse(STATUS_SUCCESS, null, data);
   }
 
@@ -34,7 +37,7 @@ public class ApiResponse {
    * @param message 실패 메시지
    * @return 실패 APIResponse
    */
-  public static ApiResponse failForm(String message) {
+  public static ApiResponse toFailForm(String message) {
     return new ApiResponse(STATUS_FAIL, message, null);
   }
 
@@ -44,7 +47,7 @@ public class ApiResponse {
    * @param message 에러 메시지
    * @return 에러 APIResponse
    */
-  public static ApiResponse errorForm(String message) {
+  public static ApiResponse toErrorForm(String message) {
     return new ApiResponse(STATUS_ERROR, message, null);
   }
 }
