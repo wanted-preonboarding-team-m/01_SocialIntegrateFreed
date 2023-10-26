@@ -1,4 +1,4 @@
-package com.wanted.socialintegratefreed.domain.user.dto;
+package com.wanted.socialintegratefreed.domain.user.dto.request;
 
 
 import com.wanted.socialintegratefreed.domain.user.entity.User;
@@ -10,7 +10,7 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Builder
-public class UserSaveRequestDto {
+public class UserRequestDto {
 
     private String email;
     private String password;
