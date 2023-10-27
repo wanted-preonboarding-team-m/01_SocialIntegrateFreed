@@ -53,13 +53,13 @@ public class UserService {
      * @return 인증코드
      */
     public int signUp(UserSignUpRequestDto userSignUpRequestDto, HttpServletRequest httpServletRequest) {
+        validateUserEmail(userSignUpRequestDto.getEmail());
         Map<String, Object> userSessionMap = new HashMap<>();
         User user = User.builder()
                 .email(userSignUpRequestDto.getEmail())
                 .password(passwordEncoder.encode(userSignUpRequestDto.getPassword()))
                 .userEnable(UserEnable.USER_DISABLED)
                 .build();
-        duplicateEmail(userSignUpRequestDto.getEmail());
 
         User saveUser = userRepository.save(user); // 사용자 저장
         int authCode = generateAuthRandomNumber(); // 랜덤 6자리수 발급
@@ -175,7 +175,7 @@ public class UserService {
     /**
      * @param email dto 이메일 duplicateEmail: 중복된 이메일 찾아 없을시 예외 발생
      */
-    public void duplicateEmail(String email) {
+    public void validateUserEmail(String email) {
         Optional<User> user = userRepository.findByEmail(email);
         if (user.isPresent()) {
             throw new BusinessException("email", email, ErrorCode.DUPLICATE_EMAIL);
