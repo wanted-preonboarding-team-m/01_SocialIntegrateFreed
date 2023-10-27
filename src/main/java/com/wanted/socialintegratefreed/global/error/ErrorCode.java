@@ -9,7 +9,6 @@ import org.springframework.http.HttpStatus;
 @Getter
 public enum ErrorCode {
   //게시물
-  //채용공고
   FEED_NOT_FOUND("해당 게시물을 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
 
   //유저
