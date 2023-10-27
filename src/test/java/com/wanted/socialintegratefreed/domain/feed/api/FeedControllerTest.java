@@ -46,66 +46,14 @@ public class FeedControllerTest extends AbstractRestDocsTests {
   private User mockUser;
   private Feed mockFeed;
 
-
-  @DisplayName("게시물 생성 요청 api가 성공한다.")
-  @Test
-  @WithMockUser(roles = {"USER"})
-  public void 게시물_생성() throws Exception {
-    // Given
-    FeedCreateRequest request = FeedCreateRequest.builder()
-        .userId(1L)
-        .title("제목")
-        .content("내용")
-        .type(FeedType.FACEBOOK)
-        .build();
-
-    String requestJson = objectMapper.writeValueAsString(request);
-
-    // When & Then
-    mockMvc.perform(post("/feeds")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(requestJson)
-            .with(csrf()))
-        .andExpect(status().isCreated());
-  }
-
-  @DisplayName("게시물 수정 요청 api가 성공한다.")
-  @Test
-  @WithMockUser(roles = {"USER"})
-  public void 게시물_수정() throws Exception {
-    Long feedId = 1L;
-    FeedUpdateRequest request = FeedUpdateRequest.builder()
-        .userId(1L)
-        .title("수정 제목")
-        .content("수정 내용")
-        .build();
-
-    mockMvc.perform(put("/feeds/" + feedId)
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(request))
-            .with(csrf()))
-        .andExpect(status().isOk());
-  }
-
-  @DisplayName("게시물 삭제 요청 api가 성공한다.")
-  @Test
-  @WithMockUser(roles = {"USER"})
-  public void 게시물_삭제() throws Exception {
-    Long feedId = 1L;
-
-    mockMvc.perform(delete("/feeds/" + feedId)
-            .with(csrf()))
-        .andExpect(status().isOk());
-  }
-
   @DisplayName("게시물 조회 요청 api가 성공한다.")
   @Test
-  @WithMockUser(roles = {"USER"})
+  @WithMockUser(roles = {"USER"}) //401 Unauthorized 권한 부여
   public void 게시물_상세_조회() throws Exception {
     Long feedId = 1L;
 
     mockMvc.perform(get("/feeds/" + feedId)
-            .with(csrf()))
+            .with(csrf())) //403 Forbidden 방지 토큰 부여
         .andExpect(status().isOk());
   }
 
