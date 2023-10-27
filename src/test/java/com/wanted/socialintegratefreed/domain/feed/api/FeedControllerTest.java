@@ -62,7 +62,7 @@ public class FeedControllerTest extends AbstractRestDocsTests {
     String requestJson = objectMapper.writeValueAsString(request);
 
     // When & Then
-    mockMvc.perform(post("/feeds")
+    mockMvc.perform(post("/api/v1/feeds")
             .contentType(MediaType.APPLICATION_JSON)
             .content(requestJson)
             .with(csrf()))
@@ -80,7 +80,7 @@ public class FeedControllerTest extends AbstractRestDocsTests {
         .content("수정 내용")
         .build();
 
-    mockMvc.perform(put("/feeds/" + feedId)
+    mockMvc.perform(put("/api/v1/feeds/" + feedId)
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(request))
             .with(csrf()))
@@ -93,7 +93,7 @@ public class FeedControllerTest extends AbstractRestDocsTests {
   public void 게시물_삭제() throws Exception {
     Long feedId = 1L;
 
-    mockMvc.perform(delete("/feeds/" + feedId)
+    mockMvc.perform(delete("/api/v1/feeds/" + feedId)
             .with(csrf()))
         .andExpect(status().isOk());
   }
@@ -104,7 +104,7 @@ public class FeedControllerTest extends AbstractRestDocsTests {
   public void 게시물_상세_조회() throws Exception {
     Long feedId = 1L;
 
-    mockMvc.perform(get("/feeds/" + feedId)
+    mockMvc.perform(get("/api/v1/feeds/" + feedId)
             .with(csrf()))
         .andExpect(status().isOk());
   }
