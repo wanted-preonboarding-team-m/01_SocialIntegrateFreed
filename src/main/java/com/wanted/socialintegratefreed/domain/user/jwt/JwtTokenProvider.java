@@ -39,21 +39,30 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 public class JwtTokenProvider {
 
     // 암호화키
-    private final String jwtSecretKey;
+    private final String JWT_SECRET_KEY;
 
     //application.yml에 등록한 value
-    private final int jwtExpireMs;
+    private final int JWT_EXPIRE_MS;
 
     // 시큐리티 자체 내 인증된 사람으로 하기위해
     private final CustomUserDetailService customUserDetailService;
 
 
-    public JwtTokenProvider(@Value("${jwt.secret}") String jwtSecretKey,
-            @Value("${jwt.expired}") final int jwtExpireMs, final CustomUserDetailService customUserDetailService) {
-        this.jwtSecretKey = jwtSecretKey;
-        this.jwtExpireMs
-                = jwtExpireMs;
+    public JwtTokenProvider(@Value("${jwt.secret}") String JWT_SECRET_KEY,
+            @Value("${jwt.expired}") final int JWT_EXPIRE_MS, final CustomUserDetailService customUserDetailService) {
+        this.JWT_SECRET_KEY = JWT_SECRET_KEY; // 이 부분을 수정
+        this.JWT_EXPIRE_MS = JWT_EXPIRE_MS;
         this.customUserDetailService = customUserDetailService;
+    }
+
+    /**
+     * @return jwt서명 키를 생성하고 반환
+     * @Variable keyBytes: BASSE64 디코딩해서 byte 배열로 변환 (secretkey를통해)
+     */
+    private Key createSignInKey() {
+
+        byte[] keyBytes = Decoders.BASE64.decode(JWT_SECRET_KEY);
+        return Keys.hmacShaKeyFor(keyBytes);
     }
 
     /**
@@ -64,13 +73,13 @@ public class JwtTokenProvider {
      */
     public String createJwt(String email) {
 
-        Date expiration = new Date(System.currentTimeMillis() + jwtExpireMs); // jwt 만료시간은 현재시간 + 1시간
+        Date expiration = new Date(System.currentTimeMillis() + JWT_EXPIRE_MS); // jwt 만료시간은 현재시간 + 1시간
         return Jwts.builder()
                 .setHeaderParam("type", "jwt") // 어떠한 type을 갖는 유형인지
                 .claim("userEmail", email) // 어떤 정보를 Jwt에 넣을건지
                 .setIssuedAt(new Date()) // 언제 토큰이 발급되었는지
                 .setExpiration(expiration) // 언제 토큰이 만료되는지
-                .signWith(SignatureAlgorithm.HS256, jwtSecretKey) // 어떤 알고리즘을 쓸거고, 어떤 key를 통해 파싱해볼건지 등록
+                .signWith(SignatureAlgorithm.HS256, createSignInKey()) // 어떤 알고리즘을 쓸거고, 어떤 key를 통해 파싱해볼건지 등록
                 .compact();
     }
 
@@ -82,16 +91,16 @@ public class JwtTokenProvider {
      */
     public boolean validateToken(String token) {
         try {
-            Jwts.parserBuilder().setSigningKey(jwtSecretKey).build().parseClaimsJws(token);
+            Jwts.parserBuilder().setSigningKey(JWT_SECRET_KEY).build().parseClaimsJws(token);
             return true;
         } catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
-            throw new BusinessException("invalid token", token, ErrorCode.INVALID_JWT_TOKEN);
+            throw new BusinessException(e, "Invalid token", ErrorCode.INVALID_JWT_TOKEN);
         } catch (ExpiredJwtException e) {
-            throw new BusinessException("Expired JWT Token", token, ErrorCode.EXPIRED_JWT_TOKEN);
+            throw new BusinessException(e, "Expired JWT Token", ErrorCode.EXPIRED_JWT_TOKEN);
         } catch (UnsupportedJwtException e) {
-            throw new BusinessException("Unsupported JWT Token", token, ErrorCode.UNSUPPORT_JWT_TOKEN);
+            throw new BusinessException(e, "Unsupported JWT Token", ErrorCode.UNSUPPORT_JWT_TOKEN);
         } catch (IllegalArgumentException e) {
-            throw new BusinessException("token claim empty", token, ErrorCode.NOT_JWT_CLAIM);
+            throw new BusinessException(e, "Token claim empty", ErrorCode.ACCESS_DENIED_EXCEPTION);
         }
     }
 
@@ -103,7 +112,7 @@ public class JwtTokenProvider {
      */
     public String getUserClaimEmail(String token) {
         return Jwts.parser()
-                .setSigningKey(jwtSecretKey)
+                .setSigningKey(createSignInKey())
                 .parseClaimsJws(token)
                 .getBody()
                 .get("userEmail", String.class);
