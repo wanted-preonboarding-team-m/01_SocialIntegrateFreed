@@ -1,15 +1,22 @@
 package com.wanted.socialintegratefreed.domain.feed.application;
 
+import static java.time.LocalDateTime.now;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.BDDMockito.*;
+import static org.mockito.BDDMockito.any;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.then;
 
 import com.wanted.socialintegratefreed.domain.feed.constant.FeedType;
+import com.wanted.socialintegratefreed.domain.feed.constant.SearchType;
 import com.wanted.socialintegratefreed.domain.feed.dao.FeedRepository;
 import com.wanted.socialintegratefreed.domain.feed.dto.request.FeedCreateRequest;
+import com.wanted.socialintegratefreed.domain.feed.dto.request.FeedSearchCond;
 import com.wanted.socialintegratefreed.domain.feed.dto.request.FeedUpdateRequest;
+import com.wanted.socialintegratefreed.domain.feed.dto.response.FeedSearchResponse;
 import com.wanted.socialintegratefreed.domain.feed.entity.Feed;
 import com.wanted.socialintegratefreed.domain.user.entity.User;
 import java.util.Optional;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -99,5 +106,22 @@ public class FeedServiceTest {
 
     // Then
     then(feedRepository).should().deleteById(1L);
+  }
+
+  @DisplayName("통계가 성공적으로 반환됩니다.")
+  @Test
+  void makeStatisticSuccess() {
+    FeedSearchCond searchCond = FeedSearchCond.builder()
+        .hashtag("해시태그")
+        .type(SearchType.DATE)
+        .start(now())
+        .end(now().plusDays(7))
+        .value("count")
+        .build();
+    given(feedRepository.search(any(), any())).willReturn(1L);
+
+    FeedSearchResponse response = feedService.search(searchCond);
+
+    Assertions.assertThat(response.getSearchResult()).isNotNull();
   }
 }
