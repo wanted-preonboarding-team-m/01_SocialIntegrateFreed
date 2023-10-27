@@ -6,7 +6,8 @@ import static com.wanted.socialintegratefreed.domain.user.utils.UserUtils.genera
 import com.wanted.socialintegratefreed.domain.user.constant.UserEnable;
 import com.wanted.socialintegratefreed.domain.user.dao.UserRepository;
 import com.wanted.socialintegratefreed.domain.user.dto.request.UserRequestAuthCodeDto;
-import com.wanted.socialintegratefreed.domain.user.dto.request.UserRequestDto;
+
+import com.wanted.socialintegratefreed.domain.user.dto.request.UserSignUpRequestDto;
 import com.wanted.socialintegratefreed.domain.user.dto.response.UserAccessTokenDto;
 import com.wanted.socialintegratefreed.domain.user.dto.response.UserResponseAuthCodeDto;
 import com.wanted.socialintegratefreed.domain.user.entity.User;
@@ -47,18 +48,18 @@ public class UserService {
     private static final int MAX_INACTIVATE_INTERVAL = 60;
 
     /**
-     * @param userSaveRequestDto 사용자 입력값
-     * @param httpServletRequest 인증코드를 사용하기 위한 httpServletRequest
+     * @param userSignUpRequestDto 사용자 입력값
+     * @param httpServletRequest   인증코드를 사용하기 위한 httpServletRequest
      * @return 인증코드
      */
-    public int signUp(UserRequestDto userSaveRequestDto, HttpServletRequest httpServletRequest) {
+    public int signUp(UserSignUpRequestDto userSignUpRequestDto, HttpServletRequest httpServletRequest) {
         Map<String, Object> userSessionMap = new HashMap<>();
         User user = User.builder()
-                .email(userSaveRequestDto.getEmail())
-                .password(passwordEncoder.encode(userSaveRequestDto.getPassword()))
+                .email(userSignUpRequestDto.getEmail())
+                .password(passwordEncoder.encode(userSignUpRequestDto.getPassword()))
                 .userEnable(UserEnable.USER_DISABLED)
                 .build();
-        duplicateEmail(userSaveRequestDto.getEmail());
+        duplicateEmail(userSignUpRequestDto.getEmail());
 
         User saveUser = userRepository.save(user); // 사용자 저장
         int authCode = generateAuthRandomNumber(); // 랜덤 6자리수 발급
@@ -139,9 +140,9 @@ public class UserService {
     /**
      * UserAccessTokenDto email,password 검증을 거친 이후 토큰 발급
      */
-    public UserAccessTokenDto login(UserRequestDto userRequestDto) {
-        User findUser = existEmailReturnUser(userRequestDto.getEmail());
-        isPasswordMatches(userRequestDto.getPassword(), findUser.getPassword());
+    public UserAccessTokenDto login(UserSignUpRequestDto userSignUpRequestDto) {
+        User findUser = existEmailReturnUser(userSignUpRequestDto.getEmail());
+        isPasswordMatches(userSignUpRequestDto.getPassword(), findUser.getPassword());
         return UserAccessTokenDto.builder()
                 .accessToken(jwtTokenProvider.createJwt(findUser.getEmail()))
                 .build();

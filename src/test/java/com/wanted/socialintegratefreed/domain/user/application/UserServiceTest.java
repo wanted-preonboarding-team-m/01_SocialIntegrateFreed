@@ -9,7 +9,7 @@ import static org.mockito.Mockito.when;
 
 import com.wanted.socialintegratefreed.domain.user.constant.UserEnable;
 import com.wanted.socialintegratefreed.domain.user.dao.UserRepository;
-import com.wanted.socialintegratefreed.domain.user.dto.request.UserRequestDto;
+import com.wanted.socialintegratefreed.domain.user.dto.request.UserSignUpRequestDto;
 import com.wanted.socialintegratefreed.domain.user.entity.User;
 import com.wanted.socialintegratefreed.global.error.BusinessException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -39,7 +39,7 @@ public class UserServiceTest {
     private UserRepository userRepository;
 
     private User user;
-    private UserRequestDto userRequestDto;
+    private UserSignUpRequestDto userRequestDto;
 
     @Mock
     private BCryptPasswordEncoder passwordEncoder;
