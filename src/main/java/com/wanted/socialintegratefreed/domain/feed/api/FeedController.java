@@ -29,65 +29,6 @@ public class FeedController {
   private final FeedService feedService;
   private final UserService userService;
 
-  /**
-   * 신규 게시물 생성 api
-   *
-   * @param request 게시글 생성을 위한 요청 데이터
-   * @return HTTP 상태 코드 및 생성된 게시글 id를 포함한 응답
-   */
-  @PostMapping
-  public ResponseEntity<ApiResponse> createFeed(@RequestBody @Valid FeedCreateRequest request){
-    //사용자 조회
-    User user = userService.getUserById(request.getUserId());
-
-    //생성한 게시글 ID 반환
-    Long createdFeedId = feedService.createFeed(request,user);
-
-    //ApiResponse를 사용한 성공 응답 생성
-    ApiResponse apiResponse = ApiResponse.toSuccessForm("게시글 생성 성공: " + createdFeedId);
-
-    return ResponseEntity.status(HttpStatus.CREATED)
-        .location(URI.create("/feeds/" + createdFeedId))
-        .body(apiResponse);
-  }
-
-  /**
-   * 게시물 수정 api
-   *
-   * @param feedId 수정할 게시물 Id
-   * @param request
-   * @return 200
-   */
-  @PutMapping("/{feedId}")
-  public ResponseEntity<ApiResponse> updateFeed(@PathVariable Long feedId, @RequestBody @Valid FeedUpdateRequest request) {
-    //사용자 조회
-    User user = userService.getUserById(request.getUserId());
-
-    //게시물 수정
-    feedService.updateFeed(feedId, request, user);
-
-    //ApiResponse를 사용한 성공 응답 생성
-    ApiResponse apiResponse = ApiResponse.toSuccessForm("게시글 업데이트 성공: " + feedId);
-
-    return ResponseEntity.ok(apiResponse);
-  }
-
-  /**
-   * 게시물 삭제 api
-   *
-   * @param feedId 삭제할 게시물 Id
-   * @return 200
-   */
-  @DeleteMapping("/{feedId}")
-  public ResponseEntity<ApiResponse> deleteFeed(@PathVariable Long feedId) {
-    //게시물 삭제
-    feedService.deleteFeed(feedId);
-
-    //ApiResponse를 사용한 성공 응답 생성
-    ApiResponse apiResponse = ApiResponse.toSuccessForm("게시글 삭제 성공: " + feedId);
-
-    return ResponseEntity.ok(apiResponse);
-  }
 
   /**
    * 게시물 상세 조회 api
