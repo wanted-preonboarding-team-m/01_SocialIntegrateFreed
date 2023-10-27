@@ -24,6 +24,8 @@ import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -136,7 +138,9 @@ public class FeedController {
    */
   @GetMapping
   public ResponseEntity<ApiResponse> makeStatistic(@RequestParam Map<String, String> params) {
-    System.out.println(params);
+    // 로그인한 유저 정보 조회
+    User user = findLoginUser();
+
     // 쿼리 파라미터를 FeedSearchCond 객체로 변환
     FeedSearchCond searchCond = toFeedSearchCond(params);
 
@@ -157,12 +161,34 @@ public class FeedController {
    */
   private FeedSearchCond toFeedSearchCond(Map<String, String> params) {
     return FeedSearchCond.builder()
-        .hashtag(params.get("hashtag")) // hashtag 검증
+        .hashtag(checkHashtag(params.get("hashtag"))) // hashtag 검증 및 null 일시 본인계정
         .type(toSearchType(params.get("type"))) // type 검증 및 변환
         .start(toDate(params.get("start"), "start")) // start 검증 및 변환, null 일시 오늘로부터 7일 전
         .end(toDate(params.get("end"), "end")) // end 검증 및 변환, null 일시 오늘
         .value(checkValue(params.get("value"))) // value 검증
         .build();
+  }
+
+  /**
+   * hashtag 검증 및 null 일시 본인계정으로 변환
+   *
+   * @param hashtag 쿼리 파라미터로 전달된 hashtag
+   * @return hashtag
+   */
+  private String checkHashtag(String hashtag) {
+    // hashtag가 null일 경우 본인계정으로 변환
+    if (!StringUtils.hasText(hashtag)) {
+      // 로그인한 사용자 정보 조회
+      User user = findLoginUser();
+      return user.getEmail();
+    }
+    return hashtag;
+  }
+
+  private User findLoginUser() {
+    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    String email = authentication.getName();
+    return userService.existEmailReturnUser(email);
   }
 
   /**

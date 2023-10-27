@@ -129,6 +129,7 @@ public class FeedControllerTest extends AbstractRestDocsTests {
   @Test
   @WithMockUser(roles = {"USER"})
   void makeStatisticSuccess() throws Exception {
+    // 검색 쿼리 파라미터 설정
     MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
     params.add("hashtag", "test");
     params.add("type", "date");
@@ -136,8 +137,10 @@ public class FeedControllerTest extends AbstractRestDocsTests {
     params.add("end", "2021-01-01");
     params.add("value", "count");
 
+    // mock으로 임의의 반환 값을 주입
     FeedSearchResponse searchResponse = new FeedSearchResponse(List.of("[2021-01-01] : 1개"));
     given(feedService.search(any())).willReturn(searchResponse);
+    given(userService.existEmailReturnUser(any())).willReturn(mockUser);
 
     mockMvc.perform(get("/api/v1/feeds").params(params))
         .andExpect(status().isOk());
