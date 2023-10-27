@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class FeedService {
 
   private final FeedRepository feedRepository;
@@ -68,7 +69,7 @@ public class FeedService {
    * @param feedId 조회할 게시물 Id
    * @return 조회한 게시물
    */
-  @Transactional(readOnly = true)
+
   public FeedDetailResponse getFeedById(Long feedId) {
     Feed feed = feedRepository.findById(feedId)
         .orElseThrow(() -> new BusinessException(feedId, "feedId", ErrorCode.FEED_NOT_FOUND));
