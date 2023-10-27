@@ -14,9 +14,11 @@ import jakarta.validation.Valid;
 import java.net.http.HttpResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -54,7 +56,9 @@ public class UserController {
 
     @PostMapping("/verify-user-code")
     public ResponseEntity<ApiResponse> verifyAuthenticationCode(
-            final @RequestBody UserRequestAuthCodeDto userRequestAuthCodeDto, HttpServletRequest httpServletRequest) {
+            final @RequestBody UserRequestAuthCodeDto userRequestAuthCodeDto,
+            HttpServletRequest httpServletRequest
+    ) {
         userService.verifyAuthenticationCodeAndRequestInput(userRequestAuthCodeDto, httpServletRequest);
         return ResponseEntity.ok(ApiResponse.toSuccessForm(SUCCESS_MESSAGE));
     }
@@ -70,6 +74,13 @@ public class UserController {
     public ResponseEntity<ApiResponse> login(final @RequestBody UserRequestDto userRequestDto) {
         UserAccessTokenDto userAccessTokenDto = userService.login(userRequestDto);
         return ResponseEntity.ok(ApiResponse.toSuccessForm(userAccessTokenDto));
+    }
+
+    @PostMapping("/refresh-user-code/{email}")
+    public ResponseEntity<ApiResponse> refreshUserCode(final @PathVariable String email
+            , HttpServletRequest httpServletRequest) {
+        UserResponseAuthCodeDto codeDto = userService.refreshCode(email, httpServletRequest);
+        return ResponseEntity.ok(ApiResponse.toSuccessForm(codeDto));
     }
 
 }
