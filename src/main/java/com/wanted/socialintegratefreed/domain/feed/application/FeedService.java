@@ -1,8 +1,10 @@
 package com.wanted.socialintegratefreed.domain.feed.application;
 
 import com.wanted.socialintegratefreed.domain.feed.dao.FeedRepository;
+import com.wanted.socialintegratefreed.domain.feed.dto.request.FeedSearchCond;
 import com.wanted.socialintegratefreed.domain.feed.dto.request.FeedUpdateRequest;
 import com.wanted.socialintegratefreed.domain.feed.dto.response.FeedDetailResponse;
+import com.wanted.socialintegratefreed.domain.feed.dto.response.FeedSearchResponse;
 import com.wanted.socialintegratefreed.domain.feed.entity.Feed;
 import com.wanted.socialintegratefreed.domain.user.entity.User;
 import com.wanted.socialintegratefreed.domain.feed.dto.request.FeedCreateRequest;
@@ -75,6 +77,10 @@ public class FeedService {
         .orElseThrow(() -> new BusinessException(feedId, "feedId", ErrorCode.FEED_NOT_FOUND));
 
     return new FeedDetailResponse(feed);
+  }
+
+  public FeedSearchResponse search(FeedSearchCond searchCond) {
+    return null;
   }
 
 }

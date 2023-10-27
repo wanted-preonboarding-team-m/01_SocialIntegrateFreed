@@ -1,17 +1,29 @@
 package com.wanted.socialintegratefreed.domain.feed.api;
 
+import static com.wanted.socialintegratefreed.domain.feed.constant.SearchType.DATE;
+import static com.wanted.socialintegratefreed.global.error.ErrorCode.INVALID_DATE;
+import static com.wanted.socialintegratefreed.global.error.ErrorCode.INVALID_SEARCH_TYPE;
+
+import com.wanted.socialintegratefreed.domain.feed.constant.SearchType;
+import com.wanted.socialintegratefreed.domain.feed.dto.request.FeedSearchCond;
 import com.wanted.socialintegratefreed.domain.feed.dto.request.FeedUpdateRequest;
 import com.wanted.socialintegratefreed.domain.feed.dto.response.FeedDetailResponse;
+import com.wanted.socialintegratefreed.domain.feed.dto.response.FeedSearchResponse;
 import com.wanted.socialintegratefreed.domain.user.entity.User;
 import com.wanted.socialintegratefreed.domain.feed.dto.request.FeedCreateRequest;
 import com.wanted.socialintegratefreed.domain.feed.application.FeedService;
 import com.wanted.socialintegratefreed.domain.user.application.UserService;
+import com.wanted.socialintegratefreed.global.error.BusinessException;
+import com.wanted.socialintegratefreed.global.error.ErrorCode;
 import com.wanted.socialintegratefreed.global.format.response.ApiResponse;
 import jakarta.validation.Valid;
 import java.net.URI;
+import java.time.LocalDateTime;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,6 +31,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -112,5 +125,99 @@ public class FeedController {
     ApiResponse apiResponse = ApiResponse.toSuccessForm(feedResponse);
 
     return ResponseEntity.ok(apiResponse);
+  }
+
+  /**
+   * 게시물 통계 조회 api
+   *
+   * @param params 쿼리 파라미터
+   * @return 200, 게시물 통계 결과
+   */
+  @GetMapping
+  public ResponseEntity<ApiResponse> makeStatistic(@RequestParam Map<String, String> params) {
+
+    // 쿼리 파라미터를 FeedSearchCond 객체로 변환
+    FeedSearchCond searchCond = toFeedSearchCond(params);
+
+    // 조건에 부합하는 통계 결과 생성
+    FeedSearchResponse searchResponse = feedService.search(searchCond);
+
+    // ApiResponse를 사용한 성공 응답 생성
+    ApiResponse apiResponse = ApiResponse.toSuccessForm(searchResponse);
+
+    return ResponseEntity.ok(apiResponse);
+  }
+
+  /**
+   * 쿼리 파라미터를 FeedSearchCond 객체로 변환
+   *
+   * @param params 쿼리 파라미터
+   * @return FeedSearchCond 객체
+   */
+  private FeedSearchCond toFeedSearchCond(Map<String, String> params) {
+    return FeedSearchCond.builder()
+        .hashtag(params.get("hashtag")) // todo hashtag 검증 및 null 일시 본인계정
+        .type(toSearchType(params.get("type"))) // type 검증 및 변환
+        .start(toDate(params.get("start"), "start")) // start 검증 및 변환, null 일시 오늘로부터 7일전
+        .end(toDate(params.get("end"), "end")) // end 검증 및 변환, null 일시 오늘
+        .value(checkValue(params.get("value"))) // value 검증
+        .build();
+  }
+
+  /**
+   * 쿼리 파라미터로 전달된 type을 SearchType enum으로 변환
+   * 입력이 date 혹은 hour가 아닐 경우 예외 발생
+   *
+   * @param type 쿼리 파라미터로 전달된 type
+   * @return SearchType enum
+   */
+  private SearchType toSearchType(String type) {
+    if (type.equals("date")) {
+      return DATE;
+    }
+    if (type.equals("hour")) {
+      return SearchType.HOUR;
+    }
+    throw new BusinessException(type, "type", INVALID_SEARCH_TYPE);
+  }
+
+  /**
+   * 쿼리 파라미터로 전달된 날짜 형식을 검증 및 LocalDateTime으로 변환
+   * 입력이 날짜 형식이 아닐 경우 예외 발생
+   * 입력이 null 일 경우 알맞은 날짜로 변환
+   *
+   * @param date 쿼리 파라미터로 전달된 날짜 형식
+   * @param startOrEnd start인지 end인지
+   * @return LocalDateTime
+   */
+  private LocalDateTime toDate(String date, String startOrEnd) {
+    if (!StringUtils.hasText(date)) {
+      if(startOrEnd.equals("start")) {
+        return LocalDateTime.now().minusDays(7);
+      }
+      if (startOrEnd.equals("end")) {
+        return LocalDateTime.now();
+      }
+    }
+
+    try {
+      return LocalDateTime.parse(date);
+    } catch (Exception e) {
+      throw new BusinessException(date, "date", INVALID_DATE);
+    }
+  }
+
+  /**
+   * 쿼리 파라미터로 전달된 value를 검증
+   * 입력이 count, view_count, like_count, share_count가 아닐 경우 예외 발생
+   *
+   * @param value 쿼리 파라미터로 전달된 value
+   * @return value
+   */
+  private String checkValue(String value) {
+    if (value.equals("count") || value.equals("view_count") || value.equals("like_count") || value.equals("share_count")) {
+      return value;
+    }
+    throw new BusinessException(value, "value", ErrorCode.INVALID_VALUE);
   }
 }

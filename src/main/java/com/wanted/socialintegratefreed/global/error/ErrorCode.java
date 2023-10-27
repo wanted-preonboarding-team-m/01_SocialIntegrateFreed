@@ -19,7 +19,10 @@ public enum ErrorCode {
     INVALID_JWT_TOKEN("유효하지 않는 토큰 입니다.", HttpStatus.BAD_REQUEST),
     EXPIRED_JWT_TOKEN("만료된 토큰 입니다. 다시 로그인 해주세요.", HttpStatus.BAD_REQUEST),
     UNSUPPORT_JWT_TOKEN("지원하지 않는 JWT 토큰 입니다.", HttpStatus.BAD_REQUEST),
-    NOT_JWT_CLAIM("해당 jwt에 정보가 없습니다.", HttpStatus.BAD_REQUEST);
+    NOT_JWT_CLAIM("해당 jwt에 정보가 없습니다.", HttpStatus.BAD_REQUEST),
+    INVALID_SEARCH_TYPE("잘못된 검색 타입입니다. date 혹은 hour로 입력해주세요.", HttpStatus.BAD_REQUEST),
+    INVALID_DATE("잘못된 날짜 형식입니다. 2022-09-10의 형태로 입력해주세요.", HttpStatus.BAD_REQUEST),
+    INVALID_VALUE("value는 count, view_count, like_count, share_count 중 하나여야 합니다.", HttpStatus.BAD_REQUEST);
 
 
     //오류 메시지
