@@ -1,8 +1,7 @@
 package com.wanted.socialintegratefreed.domain.feed.dao;
 
 import com.wanted.socialintegratefreed.domain.feed.dto.request.FeedSearchCond;
-import com.wanted.socialintegratefreed.domain.feed.entity.Feed;
-import java.util.List;
+import java.time.LocalDateTime;
 
 /**
  * JpaRepository 기능을 사용하는 인터페이스와 Querydsl 기능을 사용하는 인터페이스를 분리합니다.
@@ -12,10 +11,11 @@ import java.util.List;
 public interface FeedQueryRepository {
 
   /**
-   * 컨트롤러에서 쿼리 파라미터를 FeedSearchCond 객체로 변환하여 통계 조건으로 사용합니다.
+   * 검색 조건에 부합하는 게시물의 개수를 센다.
    *
-   * @param searchCond 쿼리 파라미터를 변환한 통계 조건 객체
-   * @return 검색 조건에 맞는 게시물 리스트
+   * @param date 검색 기간
+   * @param searchCond 검색 조건
+   * @return 검색 조건에 부합하는 게시물의 개수
    */
-  public List<Feed> search(FeedSearchCond searchCond);
+  public Long search(LocalDateTime date, FeedSearchCond searchCond);
 }

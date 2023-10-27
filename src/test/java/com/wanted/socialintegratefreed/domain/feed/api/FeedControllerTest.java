@@ -1,35 +1,40 @@
 package com.wanted.socialintegratefreed.domain.feed.api;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wanted.socialintegratefreed.config.restdocs.AbstractRestDocsTests;
 import com.wanted.socialintegratefreed.domain.feed.application.FeedService;
 import com.wanted.socialintegratefreed.domain.feed.constant.FeedType;
 import com.wanted.socialintegratefreed.domain.feed.dto.request.FeedCreateRequest;
 import com.wanted.socialintegratefreed.domain.feed.dto.request.FeedUpdateRequest;
+import com.wanted.socialintegratefreed.domain.feed.dto.response.FeedSearchResponse;
 import com.wanted.socialintegratefreed.domain.feed.entity.Feed;
 import com.wanted.socialintegratefreed.domain.user.application.UserService;
-
 import com.wanted.socialintegratefreed.domain.user.entity.User;
-import org.junit.Before;
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.context.WebApplicationContext;
-
-
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
-import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(FeedController.class)
 public class FeedControllerTest extends AbstractRestDocsTests {
@@ -117,6 +122,24 @@ public class FeedControllerTest extends AbstractRestDocsTests {
     Long feedId = 1L;
 
     mockMvc.perform(get("/api/v1/feeds/" + feedId))
+        .andExpect(status().isOk());
+  }
+
+  @DisplayName("게시물 통계 요청 api가 성공한다.")
+  @Test
+  @WithMockUser(roles = {"USER"})
+  void makeStatisticSuccess() throws Exception {
+    MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+    params.add("hashtag", "test");
+    params.add("type", "date");
+    params.add("start", "2021-01-01");
+    params.add("end", "2021-01-01");
+    params.add("value", "count");
+
+    FeedSearchResponse searchResponse = new FeedSearchResponse(List.of("[2021-01-01] : 1개"));
+    given(feedService.search(any())).willReturn(searchResponse);
+
+    mockMvc.perform(get("/api/v1/feeds").params(params))
         .andExpect(status().isOk());
   }
 

@@ -4,21 +4,22 @@ import static com.wanted.socialintegratefreed.domain.feed.constant.SearchType.DA
 import static com.wanted.socialintegratefreed.global.error.ErrorCode.INVALID_DATE;
 import static com.wanted.socialintegratefreed.global.error.ErrorCode.INVALID_SEARCH_TYPE;
 
+import com.wanted.socialintegratefreed.domain.feed.application.FeedService;
 import com.wanted.socialintegratefreed.domain.feed.constant.SearchType;
+import com.wanted.socialintegratefreed.domain.feed.dto.request.FeedCreateRequest;
 import com.wanted.socialintegratefreed.domain.feed.dto.request.FeedSearchCond;
 import com.wanted.socialintegratefreed.domain.feed.dto.request.FeedUpdateRequest;
 import com.wanted.socialintegratefreed.domain.feed.dto.response.FeedDetailResponse;
 import com.wanted.socialintegratefreed.domain.feed.dto.response.FeedSearchResponse;
-import com.wanted.socialintegratefreed.domain.user.entity.User;
-import com.wanted.socialintegratefreed.domain.feed.dto.request.FeedCreateRequest;
-import com.wanted.socialintegratefreed.domain.feed.application.FeedService;
 import com.wanted.socialintegratefreed.domain.user.application.UserService;
+import com.wanted.socialintegratefreed.domain.user.entity.User;
 import com.wanted.socialintegratefreed.global.error.BusinessException;
 import com.wanted.socialintegratefreed.global.error.ErrorCode;
 import com.wanted.socialintegratefreed.global.format.response.ApiResponse;
 import jakarta.validation.Valid;
 import java.net.URI;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -135,7 +136,7 @@ public class FeedController {
    */
   @GetMapping
   public ResponseEntity<ApiResponse> makeStatistic(@RequestParam Map<String, String> params) {
-
+    System.out.println(params);
     // 쿼리 파라미터를 FeedSearchCond 객체로 변환
     FeedSearchCond searchCond = toFeedSearchCond(params);
 
@@ -156,9 +157,9 @@ public class FeedController {
    */
   private FeedSearchCond toFeedSearchCond(Map<String, String> params) {
     return FeedSearchCond.builder()
-        .hashtag(params.get("hashtag")) // todo hashtag 검증 및 null 일시 본인계정
+        .hashtag(params.get("hashtag")) // hashtag 검증
         .type(toSearchType(params.get("type"))) // type 검증 및 변환
-        .start(toDate(params.get("start"), "start")) // start 검증 및 변환, null 일시 오늘로부터 7일전
+        .start(toDate(params.get("start"), "start")) // start 검증 및 변환, null 일시 오늘로부터 7일 전
         .end(toDate(params.get("end"), "end")) // end 검증 및 변환, null 일시 오늘
         .value(checkValue(params.get("value"))) // value 검증
         .build();
@@ -184,13 +185,14 @@ public class FeedController {
   /**
    * 쿼리 파라미터로 전달된 날짜 형식을 검증 및 LocalDateTime으로 변환
    * 입력이 날짜 형식이 아닐 경우 예외 발생
-   * 입력이 null 일 경우 알맞은 날짜로 변환
+   * 입력이 null일 경우 알맞은 날짜로 변환
    *
    * @param date 쿼리 파라미터로 전달된 날짜 형식
    * @param startOrEnd start인지 end인지
    * @return LocalDateTime
    */
   private LocalDateTime toDate(String date, String startOrEnd) {
+    // 입력이 null일 경우 알맞은 날짜로 변환
     if (!StringUtils.hasText(date)) {
       if(startOrEnd.equals("start")) {
         return LocalDateTime.now().minusDays(7);
@@ -200,8 +202,11 @@ public class FeedController {
       }
     }
 
+    // String 입력을 LocalDateTime으로 변환
     try {
-      return LocalDateTime.parse(date);
+      date += " 00:00:00"; // 날짜 형식에 맞춰 시간 추가
+      DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"); // 날짜 형식 Formatter
+      return LocalDateTime.parse(date, formatter);
     } catch (Exception e) {
       throw new BusinessException(date, "date", INVALID_DATE);
     }

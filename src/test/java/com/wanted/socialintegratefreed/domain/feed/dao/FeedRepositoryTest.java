@@ -10,7 +10,6 @@ import com.wanted.socialintegratefreed.domain.user.dao.UserRepository;
 import com.wanted.socialintegratefreed.domain.user.entity.User;
 import java.util.NoSuchElementException;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -100,7 +99,6 @@ public class FeedRepositoryTest{
     assertThat(searchFeed.getTitle()).isEqualTo(createFeed.getTitle());
     assertThat(searchFeed.getContent()).isEqualTo(createFeed.getContent());
     assertThat(searchFeed.getType()).isEqualTo(createFeed.getType());
-
   }
 
   /**
