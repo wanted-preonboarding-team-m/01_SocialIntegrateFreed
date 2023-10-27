@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/feeds")
+@RequestMapping("/api/v1/feeds")
 public class FeedController {
 
   private final FeedService feedService;
@@ -36,7 +36,9 @@ public class FeedController {
    * @return HTTP 상태 코드 및 생성된 게시글 id를 포함한 응답
    */
   @PostMapping
-  public ResponseEntity<ApiResponse> createFeed(@RequestBody @Valid FeedCreateRequest request){
+  public ResponseEntity<ApiResponse> createFeed(
+      @RequestBody @Valid FeedCreateRequest request
+  ) {
     //사용자 조회
     User user = userService.getUserById(request.getUserId());
 
@@ -59,7 +61,9 @@ public class FeedController {
    * @return 200
    */
   @PutMapping("/{feedId}")
-  public ResponseEntity<ApiResponse> updateFeed(@PathVariable Long feedId, @RequestBody @Valid FeedUpdateRequest request) {
+  public ResponseEntity<ApiResponse> updateFeed(
+      @PathVariable Long feedId, @RequestBody @Valid FeedUpdateRequest request
+  ) {
     //사용자 조회
     User user = userService.getUserById(request.getUserId());
 
@@ -79,7 +83,9 @@ public class FeedController {
    * @return 200
    */
   @DeleteMapping("/{feedId}")
-  public ResponseEntity<ApiResponse> deleteFeed(@PathVariable Long feedId) {
+  public ResponseEntity<ApiResponse> deleteFeed(
+      @PathVariable Long feedId
+  ) {
     //게시물 삭제
     feedService.deleteFeed(feedId);
 
@@ -96,7 +102,9 @@ public class FeedController {
    * @return 200, 게시물 상세 내용
    */
   @GetMapping("/{feedId}")
-  public ResponseEntity<ApiResponse> searchFeed(@PathVariable Long feedId) {
+  public ResponseEntity<ApiResponse> searchFeed(
+      @PathVariable Long feedId
+  ) {
     //게시물 조회
     FeedDetailResponse feedResponse = feedService.getFeedById(feedId);
 
