@@ -1,6 +1,5 @@
 package com.wanted.socialintegratefreed.domain.user.application;
 
-
 import static com.wanted.socialintegratefreed.domain.user.utils.UserUtils.generateAuthRandomNumber;
 
 import com.wanted.socialintegratefreed.domain.user.constant.UserEnable;
@@ -14,7 +13,6 @@ import com.wanted.socialintegratefreed.global.error.BusinessException;
 import com.wanted.socialintegratefreed.global.error.ErrorCode;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
-import jakarta.validation.Valid;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -23,7 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.ExceptionHandler;
+
 
 /**
  * 전반적인 User 비지니스 로직
@@ -32,6 +30,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 @Service
 @RequiredArgsConstructor
 @Slf4j
+@Transactional(readOnly = true)
 public class UserService {
 
 
@@ -49,10 +48,10 @@ public class UserService {
     public int signUp(UserRequestDto userSaveRequestDto, HttpServletRequest httpServletRequest) {
         Map<String, Object> userSessionMap = new HashMap<>();
         User user = User.builder()
-                .email(userSaveRequestDto.getEmail())
-                .password(passwordEncoder.encode(userSaveRequestDto.getPassword()))
-                .userEnable(UserEnable.USER_DISABLED)
-                .build();
+            .email(userSaveRequestDto.getEmail())
+            .password(passwordEncoder.encode(userSaveRequestDto.getPassword()))
+            .userEnable(UserEnable.USER_DISABLED)
+            .build();
         duplicateEmail(userSaveRequestDto.getEmail());
 
         User saveUser = userRepository.save(user); // 사용자 저장
@@ -66,7 +65,8 @@ public class UserService {
     }
 
     //세션 저장소
-    public void storeUserInSession(Map<String, Object> userMap, HttpServletRequest httpServletRequest) {
+    public void storeUserInSession(Map<String, Object> userMap,
+        HttpServletRequest httpServletRequest) {
         HttpSession httpSession = httpServletRequest.getSession(); // 세션을 가져와서
         httpSession.setAttribute("user", userMap); // 유저라는
         httpSession.setMaxInactiveInterval(60); // 세션에 60초동안 저장
@@ -78,10 +78,12 @@ public class UserService {
      * @param userRequestAuthCodeDto 체킹 할 코드, 체킹 할 email
      * @param httpServletRequest     // 세션
      */
-    public void verifyAuthenticationCodeAndRequestInput(UserRequestAuthCodeDto userRequestAuthCodeDto,
-            HttpServletRequest httpServletRequest) {
+    public void verifyAuthenticationCodeAndRequestInput(
+        UserRequestAuthCodeDto userRequestAuthCodeDto,
+        HttpServletRequest httpServletRequest) {
         HttpSession httpSession = httpServletRequest.getSession();
-        Map<String, Object> userInSessionMap = (Map<String, Object>) httpSession.getAttribute("user");
+        Map<String, Object> userInSessionMap = (Map<String, Object>) httpSession.getAttribute(
+            "user");
         if (userInSessionMap != null && !userInSessionMap.isEmpty()) {
             int authCodeInSession = (int) userInSessionMap.get("authCode");
             User userInSession = (User) userInSessionMap.get("user");
@@ -124,8 +126,8 @@ public class UserService {
         User findUser = existEmailReturnUser(userRequestDto.getEmail());
         isPasswordMatches(userRequestDto.getPassword(), findUser.getPassword());
         return UserAccessTokenDto.builder()
-                .accessToken(jwtTokenProvider.createJwt(findUser.getEmail()))
-                .build();
+            .accessToken(jwtTokenProvider.createJwt(findUser.getEmail()))
+            .build();
     }
 
     /**
@@ -137,7 +139,7 @@ public class UserService {
 
     public User findUserIdReturnUser(Long userId) {
         return userRepository.findById(userId)
-                .orElseThrow(() -> new BusinessException(userId, "userId", ErrorCode.USER_NOT_FOUND));
+            .orElseThrow(() -> new BusinessException(userId, "userId", ErrorCode.USER_NOT_FOUND));
     }
 
     /**
@@ -167,7 +169,22 @@ public class UserService {
      */
 
     public User existEmailReturnUser(String email) {
-        return userRepository.findByEmail(email).orElseThrow(() -> new BusinessException(email, "email",
+        return userRepository.findByEmail(email)
+            .orElseThrow(() -> new BusinessException(email, "email",
                 ErrorCode.EMAIL_NOT_EXIST));
+    }
+
+    /**
+     * id로 사용자 조회
+     *
+     * @param userId 사용자 id
+     * @return 조회된 사용자 Entity
+     */
+    public User getUserById(Long userId) {
+        User user = userRepository.findById(userId).orElseThrow(
+            () -> new BusinessException(userId, "companyId", ErrorCode.USER_NOT_FOUND)
+        );
+
+        return user;
     }
 }

@@ -1,7 +1,11 @@
 package com.wanted.socialintegratefreed.domain.user.dao;
 
+
 import com.wanted.socialintegratefreed.domain.user.entity.User;
 import org.junit.jupiter.api.Assertions;
+import java.util.NoSuchElementException;
+import org.junit.jupiter.api.AfterEach;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -34,4 +38,17 @@ public class UserRepositoryTest {
         Assertions.assertEquals(user.getPassword(), newUser.getPassword());
         Assertions.assertEquals(user, newUser);
     }
+
+  @DisplayName("사용자가 정상적으로 조회된다.")
+  @Test
+  void 사용자_조회() {
+
+    //When
+    User savedUser = userRepository.save(user);
+
+    // Then
+    userRepository.findById(savedUser.getUserId())
+        .orElseThrow(() -> new NoSuchElementException());
+  }
 }
+

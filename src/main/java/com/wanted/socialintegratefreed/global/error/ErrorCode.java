@@ -8,7 +8,7 @@ import org.springframework.http.HttpStatus;
  */
 @Getter
 public enum ErrorCode {
-
+    FEED_NOT_FOUND("해당 게시물을 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
     DUPLICATE_EMAIL("중복 된 이메일 입니다.", HttpStatus.BAD_REQUEST),
     PASSWORD_NOT_MATCH("비밀번호가 맞지 않습니다.", HttpStatus.BAD_REQUEST),
     ACCESS_DENIED_EXCEPTION("접근이 거부되었습니다.", HttpStatus.BAD_REQUEST),
