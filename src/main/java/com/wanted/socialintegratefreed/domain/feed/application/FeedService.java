@@ -91,6 +91,9 @@ public class FeedService {
    */
   public FeedSearchResponse search(FeedSearchCond searchCond) {
 
+    // 시작일과 종료일의 차이가 일자별 조회의 경우는 30일, 시간별 조회의 경우는 7일을 넘으면 예외 발생
+    validate(searchCond.getStart(), searchCond.getEnd(), searchCond.getType());
+
     // 검색 조건에 부합하는 통계 결과 리스트 ([date] : [count]개, 예시: [2022-01-03] : 3개)
     List<String> searchResult = new ArrayList<>();
 
@@ -104,6 +107,22 @@ public class FeedService {
     }
 
     return new FeedSearchResponse(searchResult);
+  }
+
+  /**
+   * 시작일과 종료일 검증
+   *
+   * @param start 쿼리 파라미터로 입력받은 조회 시작일
+   * @param end 쿼리 파라미터로 입력받은 조회 종료일
+   * @param type 쿼리 파라미터로 입력받은 조회 타입
+   */
+  private void validate(LocalDateTime start, LocalDateTime end, SearchType type) {
+    if (type == SearchType.DATE && start.plusDays(30).isBefore(end)) {
+      throw new BusinessException(start, "start", ErrorCode.OVER_PERIOD);
+    }
+    if (type == SearchType.HOUR && start.plusDays(7).isBefore(end)) {
+      throw new BusinessException(start, "start", ErrorCode.OVER_PERIOD);
+    }
   }
 
   /**
