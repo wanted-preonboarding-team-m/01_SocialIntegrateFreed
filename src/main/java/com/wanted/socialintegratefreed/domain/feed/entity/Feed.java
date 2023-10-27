@@ -76,6 +76,7 @@ public class Feed extends BaseTimeEntity {
   @OneToMany(mappedBy = "feed")
   private List<TagMatching> tagMatchings = new ArrayList<>();
 
+
   @Builder
   public Feed(String title, String content, Integer viewCount, Integer likeCount, Integer shareCount, FeedType type, User user) {
     this.title = title;
@@ -85,5 +86,22 @@ public class Feed extends BaseTimeEntity {
     this.shareCount = shareCount;
     this.type = type;
     this.user = user;
+  }
+
+  /**
+   *
+   * @param feed 수정할 feed 객체
+   *
+   */
+  public void update(Feed feed) {
+    if (feed.getTitle() != null) {
+      this.title = feed.getTitle();
+    }
+    if (feed.getContent() != null) {
+      this.content = feed.getContent();
+    }
+    if (feed.getType() != null) {
+      this.type = feed.getType();
+    }
   }
 }
