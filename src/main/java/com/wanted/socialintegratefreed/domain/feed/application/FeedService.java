@@ -19,20 +19,6 @@ public class FeedService {
   private final FeedRepository feedRepository;
 
   /**
-   * 게시물 생성
-   *
-   * @param request 게시물 생성 dto
-   * @param user 로그인 한 사용자
-   * @return 생성된 게시글 Id
-   */
-  @Transactional
-  public Long createFeed(FeedCreateRequest request, User user){
-    Feed feed = feedRepository.save(request.toEntity(user));
-    return feed.getFeedId();
-
-  }
-
-  /**
    * 게시물 수정
    *
    * @param feedId 수정할 게시글 Id
@@ -60,20 +46,6 @@ public class FeedService {
         .orElseThrow(() -> new BusinessException(feedId, "feedId", ErrorCode.FEED_NOT_FOUND));
 
     feedRepository.deleteById(feedId);
-  }
-
-  /**
-   * 게시물 상세 조회
-   *
-   * @param feedId 조회할 게시물 Id
-   * @return 조회한 게시물
-   */
-  @Transactional(readOnly = true)
-  public FeedDetailResponse getFeedById(Long feedId) {
-    Feed feed = feedRepository.findById(feedId)
-        .orElseThrow(() -> new BusinessException(feedId, "feedId", ErrorCode.FEED_NOT_FOUND));
-
-    return new FeedDetailResponse(feed);
   }
 
 }

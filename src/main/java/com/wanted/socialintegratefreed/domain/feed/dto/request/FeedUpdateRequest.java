@@ -28,6 +28,7 @@ public class FeedUpdateRequest {
   private FeedType type;
 
   /**
+   *
    * DTO 객체를 Feed 엔터티로 변환
    *
    * @param feed

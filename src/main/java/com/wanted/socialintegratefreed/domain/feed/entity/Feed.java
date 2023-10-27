@@ -90,6 +90,8 @@ public class Feed extends BaseTimeEntity {
 
   /**
    *
+   * 게시물 수정
+   *
    * @param feed 수정할 feed 객체
    *
    */
