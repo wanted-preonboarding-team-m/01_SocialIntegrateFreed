@@ -8,6 +8,7 @@ import com.wanted.socialintegratefreed.domain.user.dao.UserRepository;
 import com.wanted.socialintegratefreed.domain.user.dto.request.UserRequestAuthCodeDto;
 import com.wanted.socialintegratefreed.domain.user.dto.request.UserRequestDto;
 import com.wanted.socialintegratefreed.domain.user.dto.response.UserAccessTokenDto;
+import com.wanted.socialintegratefreed.domain.user.dto.response.UserResponseAuthCodeDto;
 import com.wanted.socialintegratefreed.domain.user.entity.User;
 import com.wanted.socialintegratefreed.domain.user.jwt.JwtTokenProvider;
 import com.wanted.socialintegratefreed.global.error.BusinessException;
@@ -28,24 +29,28 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 /**
  * 전반적인 User 비지니스 로직
  */
-
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class UserService {
 
-
+    //유저 Repo
     private final UserRepository userRepository;
+
+    //bean 비밀번호 확인
     private final BCryptPasswordEncoder passwordEncoder;
+
+    //Jwt 발급 class
     private final JwtTokenProvider jwtTokenProvider;
 
+    //세션 max Interval
+    private static final int MAX_INACTIVATE_INTERVAL = 60;
 
     /**
      * @param userSaveRequestDto 사용자 입력값
      * @param httpServletRequest 인증코드를 사용하기 위한 httpServletRequest
      * @return 인증코드
      */
-    @Transactional
     public int signUp(UserRequestDto userSaveRequestDto, HttpServletRequest httpServletRequest) {
         Map<String, Object> userSessionMap = new HashMap<>();
         User user = User.builder()
@@ -69,7 +74,7 @@ public class UserService {
     public void storeUserInSession(Map<String, Object> userMap, HttpServletRequest httpServletRequest) {
         HttpSession httpSession = httpServletRequest.getSession(); // 세션을 가져와서
         httpSession.setAttribute("user", userMap); // 유저라는
-        httpSession.setMaxInactiveInterval(60); // 세션에 60초동안 저장
+        httpSession.setMaxInactiveInterval(MAX_INACTIVATE_INTERVAL); // 세션에 60초동안 저장
     }
 
     /**
@@ -82,18 +87,38 @@ public class UserService {
             HttpServletRequest httpServletRequest) {
         HttpSession httpSession = httpServletRequest.getSession();
         Map<String, Object> userInSessionMap = (Map<String, Object>) httpSession.getAttribute("user");
-        if (userInSessionMap != null && !userInSessionMap.isEmpty()) {
-            int authCodeInSession = (int) userInSessionMap.get("authCode");
-            User userInSession = (User) userInSessionMap.get("user");
-            processVerifiedAuthCode(authCodeInSession, userRequestAuthCodeDto.getCode());
-            if (userInSession != null) { // 인증코드가 맞고, 세션이 없지않으면
-                processVerifiedUser(userInSession); // USER_ENABLE로 유저 업데이트
-                httpSession.removeAttribute("user"); // 이후 세션 삭제
-            }
-        } else {
-            throw new BusinessException(userInSessionMap, "session", ErrorCode.EXIST_NOT_SESSION);
+        isUserSessionNullOrEmpty(userInSessionMap);
+        int authCodeInSession = (int) userInSessionMap.get("authCode");
+        User userInSession = (User) userInSessionMap.get("user");
+        processVerifiedAuthCode(authCodeInSession, userRequestAuthCodeDto.getCode());
+        isAuthenticationCodeValidAndSessionExists(userInSession, httpSession);
+    }
+
+    /**
+     * @param getUserSession session에서 가져온 User
+     */
+    public void isAuthenticationCodeValidAndSessionExists(User getUserSession, HttpSession session) {
+        if (getUserSession != null) { // 인증코드가 맞고, 세션이 없지않으면
+            processVerifiedUser(getUserSession); // USER_ENABLE로 유저 업데이트
+            session.removeAttribute("user"); // 이후 세션 삭제
         }
     }
+
+    /**
+     * @param userSession userssion을통해 null or empty 체크
+     */
+    public void isUserSessionNullOrEmpty(Map<String, Object> userSession) {
+        if (userSession == null || userSession.isEmpty()) {
+            throw new BusinessException(userSession, "session", ErrorCode.EXIST_NOT_SESSION);
+        }
+    }
+
+    /**
+     * processVerifiedAuthCode: 인증번호 검증
+     *
+     * @param sessionCode :세션에서 가져온 authCode
+     * @param dtoCode     : return으로 넘겨준 code를 다시 dto로 받을때 code
+     */
 
     public void processVerifiedAuthCode(int sessionCode, int dtoCode) {
         if (sessionCode != dtoCode) {
@@ -110,12 +135,6 @@ public class UserService {
         findUser.updateEnableUser(UserEnable.USER_ENABLED);
         userRepository.save(findUser);
     }
-
-    private void requestUserToInputCodeAgain() {
-        // 맞지 않을 경우, 사용자에게 다시 입력 요청하는 로직을 구현
-        // 예를 들어, 다시 입력해달라는 메시지를 보낸다거나
-    }
-
 
     /**
      * UserAccessTokenDto email,password 검증을 거친 이후 토큰 발급
@@ -169,5 +188,24 @@ public class UserService {
     public User existEmailReturnUser(String email) {
         return userRepository.findByEmail(email).orElseThrow(() -> new BusinessException(email, "email",
                 ErrorCode.EMAIL_NOT_EXIST));
+    }
+
+    /**
+     * UserResponseAuthCodeDto : 인증 번호가 다시필요할때 다시 세션에 넣어준다
+     *
+     * @param email          dto email
+     * @param servletRequest
+     * @return
+     * @mothod storeUserInSession : 세션60초 저장소
+     */
+    public UserResponseAuthCodeDto refreshCode(String email, HttpServletRequest servletRequest) {
+        int code = generateAuthRandomNumber();
+        Map<String, Object> userMap = new HashMap<>();
+        userMap.put("authCode", code);
+        userMap.put("user", existEmailReturnUser(email));
+        servletRequest.setAttribute("authCode", userMap);
+        storeUserInSession(userMap, servletRequest);
+        return UserResponseAuthCodeDto.builder()
+                .code(code).build();
     }
 }
