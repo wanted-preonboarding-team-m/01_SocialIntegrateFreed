@@ -1,13 +1,21 @@
 package com.wanted.socialintegratefreed.domain.feed.dao;
 
+import static com.wanted.socialintegratefreed.domain.feed.constant.SearchType.DATE;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.wanted.socialintegratefreed.domain.feed.constant.FeedType;
 import com.wanted.socialintegratefreed.domain.feed.dto.request.FeedCreateRequest;
+import com.wanted.socialintegratefreed.domain.feed.dto.request.FeedSearchCond;
 import com.wanted.socialintegratefreed.domain.feed.entity.Feed;
+import com.wanted.socialintegratefreed.domain.hashtag.dao.HashtagRepository;
+import com.wanted.socialintegratefreed.domain.hashtag.entity.Hashtag;
+import com.wanted.socialintegratefreed.domain.tagmatching.dao.TagMatchingRepository;
+import com.wanted.socialintegratefreed.domain.tagmatching.entity.TagMatching;
+import com.wanted.socialintegratefreed.domain.user.config.JpaConfig;
 import com.wanted.socialintegratefreed.domain.user.constant.UserEnable;
 import com.wanted.socialintegratefreed.domain.user.dao.UserRepository;
 import com.wanted.socialintegratefreed.domain.user.entity.User;
+import java.time.LocalDateTime;
 import java.util.NoSuchElementException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
@@ -15,7 +23,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.context.annotation.Import;
 
+@Import(JpaConfig.class) // Auditing 기능을 사용하기 위해 JpaConfig를 import
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 public class FeedRepositoryTest{
@@ -25,6 +35,12 @@ public class FeedRepositoryTest{
 
   @Autowired
   private UserRepository userRepository;
+
+  @Autowired
+  private HashtagRepository hashtagRepository; // 통계 결과 테스트를 위해 추가
+
+  @Autowired
+  private TagMatchingRepository tagMatchingRepository; // 통계 결과 테스트를 위해 추가
 
   private Feed feed;
   private User user;
@@ -101,6 +117,29 @@ public class FeedRepositoryTest{
     assertThat(searchFeed.getType()).isEqualTo(createFeed.getType());
   }
 
+  @DisplayName("게시글 통계 결과가 성공적으로 반환된다.")
+  @Test
+  void makeStatisticsSuccess() {
+    // 테스트용 게시물과 해시태그를 연결
+    Feed feed = createFeed("제목1", "내용1", FeedType.FACEBOOK, user);
+    Hashtag hashtag = createHashtag("해시태그1");
+    createTagMatching(feed, hashtag);
+
+    // search 메소드의 파라미터들
+    FeedSearchCond searchCond = FeedSearchCond.builder()
+        .hashtag("해시태그1")
+        .type(DATE)
+        .start(feed.getCreatedAt().minusDays(5))
+        .end(feed.getCreatedAt().plusDays(5))
+        .value("count")
+        .build();
+    LocalDateTime date = feed.getCreatedAt();
+
+    Long count = feedRepository.search(date, searchCond);
+
+    assertThat(count).isEqualTo(1);
+  }
+
   /**
    * 사용자 생성
    *
@@ -125,6 +164,16 @@ public class FeedRepositoryTest{
   private Feed createFeed(String title, String content, FeedType type, User user) {
     Feed feed = new Feed(title, content, 0, 0, 0, type, user);
     return feedRepository.save(feed);
+  }
+
+  private Hashtag createHashtag(String name) {
+    Hashtag hashtag = new Hashtag(name);
+    return hashtagRepository.save(hashtag);
+  }
+
+  private TagMatching createTagMatching(Feed feed, Hashtag hashtag) {
+    TagMatching tagMatching = new TagMatching(feed, hashtag);
+    return tagMatchingRepository.save(tagMatching);
   }
 
   /**

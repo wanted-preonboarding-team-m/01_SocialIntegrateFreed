@@ -43,7 +43,7 @@ public class FeedQueryRepositoryImpl implements FeedQueryRepository {
     return query
         .select(chooseCount(searchCond.getValue()))
         .from(feed)
-        .join(feed.tagMatchings, tagMatching).fetchJoin() // 게시물과 중간 테이블을 fetch join
+        .join(feed.tagMatchings, tagMatching) // 반환 타입이 엔티티가 아니어서, fetch join을 적용하면 예외 발생
         .where(feed.tagMatchings.any().hashtag.name.eq(searchCond.getHashtag())) // 해시태그가 검색 조건과 일치하는 게시물만 검색
         .where(chooseInterval(date, searchCond.getType())) // 검색 기간이 일자별인지 시간별인지에 따라 검색
         .fetchOne();
@@ -53,6 +53,7 @@ public class FeedQueryRepositoryImpl implements FeedQueryRepository {
    * 게시물 개수, 조회수 합, 좋아요 합, 공유 수 합 중 어떤 통계를 원하는지 선택
    *
    * @param value count, view_count, like_count, share_count 중 하나
+   * @return 어떤 개수를 조건으로 삼을지 반환
    */
   private NumberExpression<Long> chooseCount(String value) {
     switch (value) {
