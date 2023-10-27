@@ -17,7 +17,6 @@ import org.springframework.security.core.userdetails.UserDetails;
  * User를 SpringSecurity 권한을 주기위해
  */
 
-@Getter
 public class UserPrincipal implements UserDetails {
 
     private User user;

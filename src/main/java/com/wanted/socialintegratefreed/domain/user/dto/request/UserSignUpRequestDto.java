@@ -16,7 +16,7 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Builder
-public class UserRequestDto {
+public class UserSignUpRequestDto {
 
     //만들 이메일
     @Email
