@@ -56,7 +56,7 @@ public class FeedController {
       @RequestBody @Valid FeedCreateRequest request
   ) {
     //사용자 조회
-    User user = userService.getUserById(request.getUserId());
+    User user = userService.findUserIdReturnUser(request.getUserId());
 
     //생성한 게시글 ID 반환
     Long createdFeedId = feedService.createFeed(request,user);
@@ -81,7 +81,7 @@ public class FeedController {
       @PathVariable Long feedId, @RequestBody @Valid FeedUpdateRequest request
   ) {
     //사용자 조회
-    User user = userService.getUserById(request.getUserId());
+    User user = userService.findUserIdReturnUser(request.getUserId());
 
     //게시물 수정
     feedService.updateFeed(feedId, request, user);
