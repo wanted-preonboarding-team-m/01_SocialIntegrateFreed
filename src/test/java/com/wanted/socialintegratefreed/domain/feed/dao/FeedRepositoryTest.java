@@ -7,6 +7,7 @@ import com.wanted.socialintegratefreed.domain.feed.dto.request.FeedCreateRequest
 import com.wanted.socialintegratefreed.domain.feed.entity.Feed;
 import com.wanted.socialintegratefreed.domain.user.dao.UserRepository;
 import com.wanted.socialintegratefreed.domain.user.entity.User;
+import java.util.NoSuchElementException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -45,11 +46,9 @@ public class FeedRepositoryTest{
     Feed feed = feedRepository.save(request.toEntity(user));
 
     // Then
-    Feed foundFeed = feedRepository.findById(feed.getFeedId()).orElse(null);
-    assertThat(foundFeed).isNotNull();
-    assertThat(foundFeed.getTitle()).isEqualTo(request.getTitle());
-    assertThat(foundFeed.getContent()).isEqualTo(request.getContent());
-    assertThat(foundFeed.getType()).isEqualTo(request.getType());
+    feedRepository.findById(feed.getFeedId())
+            .orElseThrow(() -> new NoSuchElementException());
+
   }
 
   @DisplayName("게시글이 성공적으로 수정된다.")

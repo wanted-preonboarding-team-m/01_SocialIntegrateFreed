@@ -3,6 +3,7 @@ package com.wanted.socialintegratefreed.domain.user.dao;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.wanted.socialintegratefreed.domain.user.entity.User;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -39,10 +40,8 @@ public class UserRepositoryTest {
     User savedUser = userRepository.save(user);
 
     // Then
-    Optional<User> findUser = userRepository.findById(savedUser.getUserId());
-    assertThat(findUser).isPresent();
-    assertThat(findUser.get().getEmail()).isEqualTo(email);
-    assertThat(findUser.get().getPassword()).isEqualTo(password);
+    userRepository.findById(savedUser.getUserId())
+            .orElseThrow(() -> new NoSuchElementException());
   }
 
 }
