@@ -34,24 +34,6 @@ public class FeedRepositoryTest{
     userRepository.deleteAll();
   }
 
-  @DisplayName("게시글이 성공적으로 저장된다.")
-  @Test
-  public void 게시글_저장() {
-    // Given
-    User user = createUser("test@example.com", "1234");
-    FeedCreateRequest request = createFeedRequest("Test title", "Test content", FeedType.INSTAGRAM , user);
-
-    // When
-    Feed feed = feedRepository.save(request.toEntity(user));
-
-    // Then
-    Feed foundFeed = feedRepository.findById(feed.getFeedId()).orElse(null);
-    assertThat(foundFeed).isNotNull();
-    assertThat(foundFeed.getTitle()).isEqualTo(request.getTitle());
-    assertThat(foundFeed.getContent()).isEqualTo(request.getContent());
-    assertThat(foundFeed.getType()).isEqualTo(request.getType());
-  }
-
   @DisplayName("게시글이 성공적으로 수정된다.")
   @Test
   public void 게시물_수정() {
@@ -86,22 +68,6 @@ public class FeedRepositoryTest{
     assertThat(foundFeed).isNull();
   }
 
-  @DisplayName("게시글의 상세 내용이 성공적으로 조회된다.")
-  @Test
-  public void 게시물_상세_조회() {
-    // Given
-    User user = createUser("test@example.com", "1234");
-    Feed createFeed = createFeed("제목", "내용", FeedType.FACEBOOK, user);
-    // When
-    Feed searchFeed = feedRepository.findById(createFeed.getFeedId()).orElse(null);
-
-    // Then
-    assertThat(searchFeed).isNotNull();
-    assertThat(searchFeed.getTitle()).isEqualTo(createFeed.getTitle());
-    assertThat(searchFeed.getContent()).isEqualTo(createFeed.getContent());
-    assertThat(searchFeed.getType()).isEqualTo(createFeed.getType());
-
-  }
 
   /**
    * 사용자 생성

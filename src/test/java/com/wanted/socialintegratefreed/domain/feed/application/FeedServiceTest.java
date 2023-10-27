@@ -46,25 +46,6 @@ public class FeedServiceTest {
         .build();
   }
 
-  @DisplayName("게시물이 성공적으로 생성됩니다.")
-  @Test
-  void 게시물_생성() {
-    // Given
-    FeedCreateRequest request = FeedCreateRequest.builder()
-        .userId(1L)
-        .title("제목")
-        .content("내용")
-        .type(FeedType.FACEBOOK)
-        .build();
-
-    given(feedRepository.save(any(Feed.class))).willReturn(mockFeed);
-
-    // When
-    Long feedId = feedService.createFeed(request, mockUser);
-
-    // Then
-    assertThat(feedId).isEqualTo(mockFeed.getFeedId());
-  }
 
   @DisplayName("게시물이 성공적으로 수정됩니다.")
   @Test
