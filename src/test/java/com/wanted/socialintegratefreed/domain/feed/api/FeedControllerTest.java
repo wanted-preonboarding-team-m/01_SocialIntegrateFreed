@@ -10,7 +10,6 @@ import com.wanted.socialintegratefreed.domain.feed.entity.Feed;
 import com.wanted.socialintegratefreed.domain.user.application.UserService;
 
 import com.wanted.socialintegratefreed.domain.user.entity.User;
-import org.junit.Before;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -83,6 +82,27 @@ public class FeedControllerTest extends AbstractRestDocsTests {
         .andExpect(status().isCreated());
   }
 
+  @DisplayName("게시물 생성 요청 api가 실패한다.")
+  @Test
+  @WithMockUser(roles = {"USER"})
+  public void 게시물_생성_실패() throws Exception {
+    // Given
+    FeedCreateRequest request = FeedCreateRequest.builder()
+        .userId(null)
+        .title(null)
+        .content(null)
+        .type(FeedType.FACEBOOK)
+        .build();
+
+    String requestJson = objectMapper.writeValueAsString(request);
+
+    // When & Then
+    mockMvc.perform(post("/api/v1/feeds")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(requestJson))
+        .andExpect(status().is4xxClientError());
+  }
+
   @DisplayName("게시물 수정 요청 api가 성공한다.")
   @Test
   @WithMockUser(roles = {"USER"})
@@ -98,6 +118,23 @@ public class FeedControllerTest extends AbstractRestDocsTests {
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(request)))
         .andExpect(status().isOk());
+  }
+
+  @DisplayName("게시물 수정 요청 api가 실패한다.")
+  @Test
+  @WithMockUser(roles = {"USER"})
+  public void 게시물_수정_실패() throws Exception {
+    Long feedId = 1L;
+    FeedUpdateRequest request = FeedUpdateRequest.builder()
+        .userId(null)
+        .title(null)
+        .content("수정 내용")
+        .build();
+
+    mockMvc.perform(put("/api/v1/feeds/" + feedId)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(request)))
+        .andExpect(status().is4xxClientError());
   }
 
   @DisplayName("게시물 삭제 요청 api가 성공한다.")
