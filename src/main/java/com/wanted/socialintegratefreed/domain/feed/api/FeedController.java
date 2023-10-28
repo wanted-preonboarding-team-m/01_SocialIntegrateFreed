@@ -33,7 +33,7 @@ public class FeedController {
    * 신규 게시물 생성 api
    *
    * @param request 게시글 생성을 위한 요청 데이터
-   * @return HTTP 상태 코드 및 생성된 게시글 id를 포함한 응답
+   * @return 201 및 생성된 게시글 id
    */
   @PostMapping
   public ResponseEntity<ApiResponse> createFeed(
@@ -46,7 +46,7 @@ public class FeedController {
     Long createdFeedId = feedService.createFeed(request,user);
 
     //ApiResponse를 사용한 성공 응답 생성
-    ApiResponse apiResponse = ApiResponse.toSuccessForm("게시글 생성 성공: " + createdFeedId);
+    ApiResponse apiResponse = ApiResponse.toSuccessForm(createdFeedId);
 
     return ResponseEntity.status(HttpStatus.CREATED)
         .location(URI.create("/feeds/" + createdFeedId))
@@ -62,7 +62,8 @@ public class FeedController {
    */
   @PutMapping("/{feedId}")
   public ResponseEntity<ApiResponse> updateFeed(
-      @PathVariable Long feedId, @RequestBody @Valid FeedUpdateRequest request
+      @PathVariable Long feedId,
+      @RequestBody @Valid FeedUpdateRequest request
   ) {
     //사용자 조회
     User user = userService.getUserById(request.getUserId());
@@ -71,9 +72,9 @@ public class FeedController {
     feedService.updateFeed(feedId, request, user);
 
     //ApiResponse를 사용한 성공 응답 생성
-    ApiResponse apiResponse = ApiResponse.toSuccessForm("게시글 업데이트 성공: " + feedId);
+    ApiResponse apiResponse = ApiResponse.toSuccessForm(feedId);
 
-    return ResponseEntity.ok(apiResponse);
+    return ResponseEntity.ok(ApiResponse.toSuccessForm(feedId));
   }
 
   /**
@@ -89,10 +90,7 @@ public class FeedController {
     //게시물 삭제
     feedService.deleteFeed(feedId);
 
-    //ApiResponse를 사용한 성공 응답 생성
-    ApiResponse apiResponse = ApiResponse.toSuccessForm("게시글 삭제 성공: " + feedId);
-
-    return ResponseEntity.ok(apiResponse);
+    return ResponseEntity.ok(ApiResponse.toSuccessForm(feedId));
   }
 
   /**
