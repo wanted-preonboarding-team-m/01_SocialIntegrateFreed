@@ -25,6 +25,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 
+import static com.wanted.socialintegratefreed.domain.feed.constant.FeedType.INSTAGRAM;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -112,6 +113,7 @@ public class FeedControllerTest extends AbstractRestDocsTests {
         .userId(1L)
         .title("수정 제목")
         .content("수정 내용")
+        .type(INSTAGRAM)
         .build();
 
     mockMvc.perform(put("/api/v1/feeds/" + feedId)
