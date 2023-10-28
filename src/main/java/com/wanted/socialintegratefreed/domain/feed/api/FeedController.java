@@ -62,7 +62,8 @@ public class FeedController {
    */
   @PutMapping("/{feedId}")
   public ResponseEntity<ApiResponse> updateFeed(
-      @PathVariable Long feedId, @RequestBody @Valid FeedUpdateRequest request
+      @PathVariable Long feedId,
+      @RequestBody @Valid FeedUpdateRequest request
   ) {
     //사용자 조회
     User user = userService.getUserById(request.getUserId());
