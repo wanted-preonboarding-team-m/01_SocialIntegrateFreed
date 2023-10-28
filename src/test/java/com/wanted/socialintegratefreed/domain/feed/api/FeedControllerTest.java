@@ -20,6 +20,7 @@ import com.wanted.socialintegratefreed.domain.feed.dto.response.FeedSearchRespon
 import com.wanted.socialintegratefreed.domain.feed.entity.Feed;
 import com.wanted.socialintegratefreed.domain.user.application.UserService;
 import com.wanted.socialintegratefreed.domain.user.entity.User;
+import com.wanted.socialintegratefreed.domain.user.jwt.JwtTokenProvider;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -49,6 +50,10 @@ public class FeedControllerTest extends AbstractRestDocsTests {
 
   @MockBean
   private UserService userService;
+
+  // 이 mock 객체가 없으면 jwtTokenProvider 빈을 주입하지 못했다는 메세지와 함께 테스트가 실패한다.
+  @MockBean
+  private JwtTokenProvider jwtTokenProvider;
 
   private final ObjectMapper objectMapper = new ObjectMapper();
 
