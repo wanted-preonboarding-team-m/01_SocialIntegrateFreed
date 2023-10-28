@@ -15,6 +15,7 @@ import com.wanted.socialintegratefreed.global.error.BusinessException;
 import com.wanted.socialintegratefreed.global.error.ErrorCode;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -98,6 +99,16 @@ public class UserService {
         if (getUserSession != null) { // 인증코드가 맞고, 세션이 없지않으면
             processVerifiedUser(getUserSession); // USER_ENABLE로 유저 업데이트
             session.removeAttribute("user"); // 이후 세션 삭제
+
+        }
+    }
+
+    /**
+     * @param userSession userssion을통해 null or empty 체크
+     */
+    public void isUserSessionNullOrEmpty(Map<String, Object> userSession) {
+        if (userSession == null || userSession.isEmpty()) {
+            throw new BusinessException(userSession, "session", ErrorCode.EXIST_NOT_SESSION);
         }
     }
 
