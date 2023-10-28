@@ -1,12 +1,17 @@
 package com.wanted.socialintegratefreed.domain.feed.dto.request;
 
 import static lombok.AccessLevel.PRIVATE;
+import static lombok.AccessLevel.PROTECTED;
 
 import com.wanted.socialintegratefreed.domain.feed.constant.FeedType;
 import com.wanted.socialintegratefreed.domain.feed.entity.Feed;
 import com.wanted.socialintegratefreed.domain.user.entity.User;
+
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PositiveOrZero;
+import jakarta.validation.constraints.Size;
 import java.time.LocalDate;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -19,20 +24,23 @@ import lombok.Setter;
  */
 @Getter
 @NoArgsConstructor(access = PRIVATE)
-@AllArgsConstructor(access = PRIVATE)
+@AllArgsConstructor(access = PROTECTED)
 @Builder
 public class FeedCreateRequest {
 
-  @NotNull
+  @PositiveOrZero(message = "올바른 사용자 아이디를 입력해주세요.")
+  @NotNull(message = "사용자 아이디를 입력해주세요.")
   private Long userId;
 
-  @NotEmpty
+  @Size(max = 128)
+  @NotBlank(message = "제목은 공백을 허용하지 않습니다.")
+  @NotEmpty(message = "제목을 입력해주세요.")
   private String title;
 
-  @NotEmpty
+  @NotEmpty(message = "내용을 입력해주세요.")
   private String content;
 
-  @NotNull
+  @NotNull(message = "게시글 유형을 입력해주세요.")
   private FeedType type;
 
   /**
