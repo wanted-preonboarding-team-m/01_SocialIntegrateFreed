@@ -92,7 +92,7 @@ public class FeedService {
   public FeedSearchResponse search(FeedSearchCond searchCond) {
 
     // 시작일과 종료일의 차이가 일자별 조회의 경우는 30일, 시간별 조회의 경우는 7일을 넘으면 예외 발생
-    validate(searchCond.getStart(), searchCond.getEnd(), searchCond.getType());
+    validateDate(searchCond.getStart(), searchCond.getEnd(), searchCond.getType());
 
     // 검색 조건에 부합하는 통계 결과 리스트 ([date] : [count]개, 예시: [2022-01-03] : 3개)
     List<String> searchResult = new ArrayList<>();
@@ -116,7 +116,7 @@ public class FeedService {
    * @param end 쿼리 파라미터로 입력받은 조회 종료일
    * @param type 쿼리 파라미터로 입력받은 조회 타입
    */
-  private void validate(LocalDateTime start, LocalDateTime end, SearchType type) {
+  private void validateDate(LocalDateTime start, LocalDateTime end, SearchType type) {
     if (type == SearchType.DATE && start.plusDays(30).isBefore(end)) {
       throw new BusinessException(start, "start", ErrorCode.OVER_PERIOD);
     }
@@ -147,16 +147,14 @@ public class FeedService {
         dateList.add(date);
         date = date.plusDays(1);
       }
+      return dateList;
     }
 
     // HOUR 타입이면 start ~ end 기간내 1시간 간격으로 LocalDateTime 리스트 생성
-    else {
-      while (date.isBefore(end)) {
-        dateList.add(date);
-        date = date.plusHours(1);
-      }
+    while (date.isBefore(end)) {
+      dateList.add(date);
+      date = date.plusHours(1);
     }
-
     return dateList;
   }
 

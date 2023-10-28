@@ -8,11 +8,14 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.NumberExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.wanted.socialintegratefreed.domain.feed.constant.SearchType;
+import com.wanted.socialintegratefreed.domain.feed.constant.SearchValue;
 import com.wanted.socialintegratefreed.domain.feed.dto.request.FeedSearchCond;
+import com.wanted.socialintegratefreed.domain.feed.entity.Feed;
 import com.wanted.socialintegratefreed.global.error.BusinessException;
 import com.wanted.socialintegratefreed.global.error.ErrorCode;
 import jakarta.persistence.EntityManager;
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * FeedQueryRepository 인터페이스의 구현체
@@ -20,14 +23,10 @@ import java.time.LocalDateTime;
  */
 public class FeedQueryRepositoryImpl implements FeedQueryRepository {
 
-  // Jpql을 생성하기 위한 EntityManager
-  private final EntityManager em;
-
   // Querydsl을 사용하기 위한 JPAQueryFactory
   private final JPAQueryFactory query;
 
   public FeedQueryRepositoryImpl(EntityManager em) {
-    this.em = em;
     this.query = new JPAQueryFactory(em);
   }
 
@@ -40,40 +39,53 @@ public class FeedQueryRepositoryImpl implements FeedQueryRepository {
    */
   @Override
   public Long search(LocalDateTime date, FeedSearchCond searchCond) {
-    return query
-        .select(chooseCount(searchCond.getValue()))
+    List<Feed> feedList = query
+        .select(feed)
         .from(feed)
-        .join(feed.tagMatchings, tagMatching) // 반환 타입이 엔티티가 아니어서, fetch join을 적용하면 예외 발생
-        .where(feed.tagMatchings.any().hashtag.name.eq(searchCond.getHashtag())) // 해시태그가 검색 조건과 일치하는 게시물만 검색
+        .join(feed.tagMatchings, tagMatching).fetchJoin() // fetch join을 적용하여 N + 1 문제 방지
+        .where(feed.tagMatchings.any().hashtag.name.eq(
+            searchCond.getHashtag())) // 해시태그가 검색 조건과 일치하는 게시물만 검색
         .where(chooseInterval(date, searchCond.getType())) // 검색 기간이 일자별인지 시간별인지에 따라 검색
-        .fetchOne();
+        .fetch();
+
+    return calculateCount(feedList, searchCond.getValue());
   }
 
   /**
-   * 게시물 개수, 조회수 합, 좋아요 합, 공유 수 합 중 어떤 통계를 원하는지 선택
+   * 쿼리 파라미터로 입력받은 value 값에 따라, 게시물의 총 개수, 좋아요 개수의 합, 조회수 합, 공유수 합를 계산한다.
    *
-   * @param value count, view_count, like_count, share_count 중 하나
-   * @return 어떤 개수를 조건으로 삼을지 반환
+   * @param feedList 검색 조건에 부합하는 게시물 리스트
+   * @param value count, like_count, view_count, share_count 중 하나
+   * @return 게시물의 총 개수, 좋아요 개수, 조회수, 공유수 중 하나
    */
-  private NumberExpression<Long> chooseCount(String value) {
-    switch (value) {
-      // 게시물 개수
-      case "count" -> {
-        return feed.count();
-      }
-      // 조회수 합
-      case "view_count" -> {
-        return feed.viewCount.sum().longValue();
-      }
-      // 좋아요 합
-      case "like_count" -> {
-        return feed.likeCount.sum().longValue();
-      }
-      // 공유 수 합
-      case "share_count" -> {
-        return feed.shareCount.sum().longValue();
-      }
+  private Long calculateCount(List<Feed> feedList, SearchValue value) {
+
+    // 게시물의 총 개수
+    if (value == SearchValue.COUNT) {
+      return (long) feedList.size();
     }
+
+    // 게시물의 좋아요 개수의 합
+    if (value == SearchValue.LIKE_COUNT) {
+      return (long) feedList.stream()
+          .map(Feed::getLikeCount)
+          .reduce(Integer::sum).orElse(0);
+    }
+
+    // 게시물의 조회수 합
+    if (value == SearchValue.VIEW_COUNT) {
+      return (long) feedList.stream()
+          .map(Feed::getViewCount)
+          .reduce(Integer::sum).orElse(0);
+    }
+
+    // 게시물의 공유수 합
+    if (value == SearchValue.SHARE_COUNT) {
+      return (long) feedList.stream()
+          .map(Feed::getShareCount)
+          .reduce(Integer::sum).orElse(0);
+    }
+
     throw new BusinessException(value, "value", ErrorCode.INVALID_VALUE);
   }
 

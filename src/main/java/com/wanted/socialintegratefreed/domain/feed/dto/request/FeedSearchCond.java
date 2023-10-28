@@ -1,6 +1,7 @@
 package com.wanted.socialintegratefreed.domain.feed.dto.request;
 
 import com.wanted.socialintegratefreed.domain.feed.constant.SearchType;
+import com.wanted.socialintegratefreed.domain.feed.constant.SearchValue;
 import java.time.LocalDateTime;
 import lombok.Builder;
 import lombok.Getter;
@@ -33,11 +34,10 @@ public class FeedSearchCond {
    * like_count: 조회된 게시물들의 like_count 합
    * share_count: 조회된 게시물들의 share_count 합
    */
-  private final String value;
+  private final SearchValue value;
 
   @Builder
-  public FeedSearchCond(String hashtag, SearchType type, LocalDateTime start, LocalDateTime end,
-      String value) {
+  public FeedSearchCond(String hashtag, SearchType type, LocalDateTime start, LocalDateTime end, SearchValue value) {
     this.hashtag = hashtag;
     this.type = type;
     this.start = start;

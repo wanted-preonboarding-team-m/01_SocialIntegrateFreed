@@ -6,6 +6,7 @@ import static com.wanted.socialintegratefreed.global.error.ErrorCode.INVALID_SEA
 
 import com.wanted.socialintegratefreed.domain.feed.application.FeedService;
 import com.wanted.socialintegratefreed.domain.feed.constant.SearchType;
+import com.wanted.socialintegratefreed.domain.feed.constant.SearchValue;
 import com.wanted.socialintegratefreed.domain.feed.dto.request.FeedCreateRequest;
 import com.wanted.socialintegratefreed.domain.feed.dto.request.FeedSearchCond;
 import com.wanted.socialintegratefreed.domain.feed.dto.request.FeedUpdateRequest;
@@ -20,6 +21,7 @@ import jakarta.validation.Valid;
 import java.net.URI;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -138,8 +140,6 @@ public class FeedController {
    */
   @GetMapping
   public ResponseEntity<ApiResponse> makeStatistic(@RequestParam Map<String, String> params) {
-    // 로그인한 유저 정보 조회
-    User user = findLoginUser();
 
     // 쿼리 파라미터를 FeedSearchCond 객체로 변환
     FeedSearchCond searchCond = toFeedSearchCond(params);
@@ -162,10 +162,10 @@ public class FeedController {
   private FeedSearchCond toFeedSearchCond(Map<String, String> params) {
     return FeedSearchCond.builder()
         .hashtag(checkHashtag(params.get("hashtag"))) // hashtag 검증 및 null 일시 본인계정
-        .type(toSearchType(params.get("type"))) // type 검증 및 변환
+        .type(toSearchType(params.get("type"))) // type 검증 및 enum으로 변환
         .start(toDate(params.get("start"), "start")) // start 검증 및 변환, null 일시 오늘로부터 7일 전
         .end(toDate(params.get("end"), "end")) // end 검증 및 변환, null 일시 오늘
-        .value(checkValue(params.get("value"))) // value 검증
+        .value(toSearchValue(params.get("value"))) // value 검증 및 enum으로 변환
         .build();
   }
 
@@ -233,7 +233,7 @@ public class FeedController {
       date += " 00:00:00"; // 날짜 형식에 맞춰 시간 추가
       DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"); // 날짜 형식 Formatter
       return LocalDateTime.parse(date, formatter);
-    } catch (Exception e) {
+    } catch (DateTimeParseException exception) {
       throw new BusinessException(date, "date", INVALID_DATE);
     }
   }
@@ -245,10 +245,29 @@ public class FeedController {
    * @param value 쿼리 파라미터로 전달된 value
    * @return value
    */
-  private String checkValue(String value) {
-    if (value.equals("count") || value.equals("view_count") || value.equals("like_count") || value.equals("share_count")) {
-      return value;
+  private SearchValue toSearchValue(String value) {
+
+    // 게시물의 총 개수
+    if (value.equals("count")) {
+      return SearchValue.COUNT;
     }
+
+    // 게시물의 조회수 합
+    if (value.equals("view_count")) {
+      return SearchValue.VIEW_COUNT;
+    }
+
+    // 게시물의 좋아요 개수 합
+    if (value.equals("like_count")) {
+      return SearchValue.LIKE_COUNT;
+    }
+
+    // 게시물의 공유수 합
+    if (value.equals("share_count")) {
+      return SearchValue.SHARE_COUNT;
+    }
+
+    // 입력이 count, view_count, like_count, share_count가 아닐 경우 예외 발생
     throw new BusinessException(value, "value", ErrorCode.INVALID_VALUE);
   }
 }
