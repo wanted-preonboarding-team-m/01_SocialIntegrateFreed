@@ -1,6 +1,7 @@
 package com.wanted.socialintegratefreed.domain.feed.dto.request;
 
 import static com.wanted.socialintegratefreed.domain.feed.constant.FeedType.FACEBOOK;
+import static com.wanted.socialintegratefreed.domain.feed.constant.FeedType.INSTAGRAM;
 import static com.wanted.socialintegratefreed.domain.feed.constant.FeedType.THREADS;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
@@ -31,10 +32,15 @@ class FeedCreateRequestTest {
   @DisplayName("userId,title,content,type에 null 을 허용하지 않습니다.")
   void 널값_허용_안함() {
     //Given
-    FeedCreateRequest nullDto = new FeedCreateRequest(null,null,null,null);
+    FeedCreateRequest userDto = FeedCreateRequest.builder()
+        .userId(null)
+        .title(null)
+        .content(null)
+        .type(null)
+        .build();
 
     //When
-    Set<ConstraintViolation<FeedCreateRequest>> violations = validator.validate(nullDto);
+    Set<ConstraintViolation<FeedCreateRequest>> violations = validator.validate(userDto);
 
     //Then
     violations.forEach(i -> System.out.println(i.getMessage()));
@@ -53,7 +59,12 @@ class FeedCreateRequestTest {
   @DisplayName("제목은 공백을 허용하지 않습니다.")
   void 제목_공백_허용_안함() {
     //Given
-    FeedCreateRequest nullDto = new FeedCreateRequest(1L," ","내용",THREADS);
+    FeedCreateRequest nullDto = FeedCreateRequest.builder()
+        .userId(1L)
+        .title(" ")
+        .content("내용")
+        .type(INSTAGRAM)
+        .build();
 
     //When
     Set<ConstraintViolation<FeedCreateRequest>> violations = validator.validate(nullDto);
@@ -68,7 +79,12 @@ class FeedCreateRequestTest {
   @DisplayName("올바른 사용자 아이디를 입력해주세요.(양수 허용)")
   void 사용자_아이디_확인() {
     //Given
-    FeedCreateRequest userDto = new FeedCreateRequest(-30L, "제목", "내용", FACEBOOK);
+    FeedCreateRequest userDto = FeedCreateRequest.builder()
+        .userId(-30L)
+        .title("제목")
+        .content("내용")
+        .type(FACEBOOK)
+        .build();
 
     //When
     Set<ConstraintViolation<FeedCreateRequest>> violations = validator.validate(userDto);
@@ -85,7 +101,12 @@ class FeedCreateRequestTest {
     StringBuilder title = new StringBuilder();
     IntStream.range(0,200).forEach(i -> title.append("A"));
 
-    FeedCreateRequest userDto = new FeedCreateRequest(1L, title.toString(), "내용", FACEBOOK);
+    FeedCreateRequest userDto = FeedCreateRequest.builder()
+        .userId(1L)
+        .title(title.toString())
+        .content("내용")
+        .type(FACEBOOK)
+        .build();
 
     //When
     Set<ConstraintViolation<FeedCreateRequest>> violations = validator.validate(userDto);
@@ -103,7 +124,12 @@ class FeedCreateRequestTest {
     StringBuilder title = new StringBuilder();
     IntStream.range(0,100).forEach(i -> title.append("A"));
 
-    FeedCreateRequest userDto = new FeedCreateRequest(1L, title.toString(), "내용", FACEBOOK);
+    FeedCreateRequest userDto = FeedCreateRequest.builder()
+        .userId(1L)
+        .title(title.toString())
+        .content("내용")
+        .type(FACEBOOK)
+        .build();
 
     //When
     Set<ConstraintViolation<FeedCreateRequest>> violations = validator.validate(userDto);

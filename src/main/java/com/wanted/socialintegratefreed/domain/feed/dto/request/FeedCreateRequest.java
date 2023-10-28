@@ -24,7 +24,7 @@ import lombok.Setter;
  */
 @Getter
 @NoArgsConstructor(access = PRIVATE)
-@AllArgsConstructor(access = PROTECTED)
+@AllArgsConstructor(access = PRIVATE)
 @Builder
 public class FeedCreateRequest {
 
@@ -42,6 +42,7 @@ public class FeedCreateRequest {
 
   @NotNull(message = "게시글 유형을 입력해주세요.")
   private FeedType type;
+
 
   /**
    * DTO 객체를 Feed 엔터티로 변환
