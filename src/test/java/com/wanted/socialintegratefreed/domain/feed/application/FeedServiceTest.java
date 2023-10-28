@@ -8,6 +8,7 @@ import static org.mockito.BDDMockito.then;
 
 import com.wanted.socialintegratefreed.domain.feed.constant.FeedType;
 import com.wanted.socialintegratefreed.domain.feed.constant.SearchType;
+import com.wanted.socialintegratefreed.domain.feed.constant.SearchValue;
 import com.wanted.socialintegratefreed.domain.feed.dao.FeedRepository;
 import com.wanted.socialintegratefreed.domain.feed.dto.request.FeedCreateRequest;
 import com.wanted.socialintegratefreed.domain.feed.dto.request.FeedSearchCond;
@@ -116,7 +117,7 @@ public class FeedServiceTest {
         .type(SearchType.DATE)
         .start(now())
         .end(now().plusDays(7))
-        .value("count")
+        .value(SearchValue.COUNT)
         .build();
     given(feedRepository.search(any(), any())).willReturn(1L);
 

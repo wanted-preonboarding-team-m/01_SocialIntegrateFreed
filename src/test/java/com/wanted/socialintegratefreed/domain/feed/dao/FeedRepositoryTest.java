@@ -5,6 +5,7 @@ import static com.wanted.socialintegratefreed.domain.feed.constant.SearchType.DA
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.wanted.socialintegratefreed.domain.feed.constant.FeedType;
+import com.wanted.socialintegratefreed.domain.feed.constant.SearchValue;
 import com.wanted.socialintegratefreed.domain.feed.dto.request.FeedCreateRequest;
 import com.wanted.socialintegratefreed.domain.feed.dto.request.FeedSearchCond;
 import com.wanted.socialintegratefreed.domain.feed.entity.Feed;
@@ -142,7 +143,7 @@ public class FeedRepositoryTest{
         .type(DATE)
         .start(feed.getCreatedAt().minusDays(5))
         .end(feed.getCreatedAt().plusDays(5))
-        .value("count")
+        .value(SearchValue.COUNT)
         .build();
     LocalDateTime date = feed.getCreatedAt();
 
@@ -174,7 +175,7 @@ public class FeedRepositoryTest{
         .type(DATE)
         .start(feed.getCreatedAt().minusDays(5))
         .end(feed.getCreatedAt().plusDays(5))
-        .value("like_count")
+        .value(SearchValue.LIKE_COUNT)
         .build();
     LocalDateTime date = feed.getCreatedAt();
 
