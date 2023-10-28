@@ -10,6 +10,7 @@ import com.wanted.socialintegratefreed.domain.feed.entity.Feed;
 import com.wanted.socialintegratefreed.domain.user.application.UserService;
 
 import com.wanted.socialintegratefreed.domain.user.entity.User;
+import com.wanted.socialintegratefreed.domain.user.jwt.JwtTokenProvider;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -38,6 +39,9 @@ public class FeedControllerTest extends AbstractRestDocsTests {
 
   @Autowired
   private WebApplicationContext context;
+
+  @MockBean
+  private JwtTokenProvider jwtTokenProvider;
 
   @MockBean
   private FeedService feedService;
