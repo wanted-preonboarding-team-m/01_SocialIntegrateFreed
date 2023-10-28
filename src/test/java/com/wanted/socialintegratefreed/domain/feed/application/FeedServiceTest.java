@@ -10,6 +10,7 @@ import com.wanted.socialintegratefreed.domain.feed.dto.request.FeedUpdateRequest
 import com.wanted.socialintegratefreed.domain.feed.entity.Feed;
 import com.wanted.socialintegratefreed.domain.user.entity.User;
 import java.util.Optional;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -45,6 +46,7 @@ public class FeedServiceTest {
         .user(mockUser)
         .build();
   }
+
 
   @DisplayName("게시물이 성공적으로 생성됩니다.")
   @Test
@@ -88,6 +90,7 @@ public class FeedServiceTest {
     assertThat(mockFeed.getType()).isEqualTo(request.getType());
   }
 
+
   @DisplayName("게시물이 성공적으로 삭제됩니다.")
   @Test
   void 게시물_삭제() {
@@ -99,5 +102,31 @@ public class FeedServiceTest {
 
     // Then
     then(feedRepository).should().deleteById(1L);
+  }
+
+  @DisplayName("게시물 제목만 성공적으로 수정됩니다.")
+  @Test
+  void 게시물_제목만_수정() {
+    //Given
+    String originalTitle = mockFeed.getTitle();
+    String originalContent = mockFeed.getContent();
+    FeedType originalType = mockFeed.getType();
+
+    FeedUpdateRequest request = FeedUpdateRequest.builder()
+        .userId(mockUser.getUserId())
+        .title("수정한 제목")
+        .content(null)
+        .type(null)
+        .build();
+
+    given(feedRepository.findById(1L)).willReturn(Optional.of(mockFeed));
+
+    // When
+    feedService.updateFeed(1L, request, mockUser);
+
+    // Then
+    assertThat(mockFeed.getTitle()).isEqualTo(request.getTitle());
+    assertThat(mockFeed.getContent()).isEqualTo(originalContent);
+    assertThat(mockFeed.getType()).isEqualTo(originalType);
   }
 }
