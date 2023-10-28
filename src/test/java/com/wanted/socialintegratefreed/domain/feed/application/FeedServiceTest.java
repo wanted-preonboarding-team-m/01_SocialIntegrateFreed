@@ -1,6 +1,7 @@
 package com.wanted.socialintegratefreed.domain.feed.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.BDDMockito.*;
 
 import com.wanted.socialintegratefreed.domain.feed.constant.FeedType;
@@ -32,7 +33,7 @@ public class FeedServiceTest {
   private User mockUser;
 
   @BeforeEach
-  void setUp(){
+  void setUp() {
     mockUser = User.builder()
         .userId(1L)
         .email("test@example.com")
@@ -129,4 +130,35 @@ public class FeedServiceTest {
     assertThat(mockFeed.getContent()).isEqualTo(originalContent);
     assertThat(mockFeed.getType()).isEqualTo(originalType);
   }
+
+  @DisplayName("게시물 수정이 실패합니다.")
+  @Test
+  void 게시물_수정_실패() {
+    //Given
+    FeedUpdateRequest request = FeedUpdateRequest.builder()
+        .userId(1L)
+        .title("수정한 제목")
+        .content("수정한 내용")
+        .type(FeedType.THREADS)
+        .build();
+
+    given(feedRepository.findById(1L)).willReturn(Optional.of(mockFeed));
+
+    // When & Then
+    assertThatThrownBy(() -> feedService.updateFeed(2L, request, mockUser))
+        .isInstanceOf(Exception.class);
+
+    }
+
+  @DisplayName("게시물 삭제가 실패합니다.")
+  @Test
+  void 게시물_삭제_실패() {
+    // Given
+    given(feedRepository.findById(1L)).willReturn(Optional.of(mockFeed));
+
+    // When & Then
+    assertThatThrownBy(() -> feedService.deleteFeed(2L))
+        .isInstanceOf(Exception.class);
+  }
 }
+
