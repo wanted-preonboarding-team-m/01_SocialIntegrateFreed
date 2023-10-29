@@ -103,6 +103,7 @@ public class FeedControllerTest extends AbstractRestDocsTests {
                 .userId(1L)
                 .title("수정 제목")
                 .content("수정 내용")
+                .type(FeedType.FACEBOOK)
                 .build();
 
         mockMvc.perform(put("/api/v1/feeds/" + feedId)
