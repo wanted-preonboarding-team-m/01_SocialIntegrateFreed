@@ -20,7 +20,7 @@ import com.wanted.socialintegratefreed.domain.feed.dto.response.FeedSearchRespon
 import com.wanted.socialintegratefreed.domain.feed.entity.Feed;
 import com.wanted.socialintegratefreed.domain.user.application.UserService;
 import com.wanted.socialintegratefreed.domain.user.entity.User;
-
+import com.wanted.socialintegratefreed.domain.user.jwt.JwtTokenProvider;
 import com.wanted.socialintegratefreed.domain.user.jwt.JwtTokenProvider;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
@@ -48,55 +48,58 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(FeedController.class)
 public class FeedControllerTest extends AbstractRestDocsTests {
 
-    @Autowired
-    private MockMvc mockMvc;
+  @Autowired
+  private MockMvc mockMvc;
 
-    @Autowired
-    private WebApplicationContext context;
+  @Autowired
+  private WebApplicationContext context;
 
-    @MockBean
-    private FeedService feedService;
+  @MockBean
+  private JwtTokenProvider jwtTokenProvider;
 
-    @MockBean
-    private UserService userService;
+  @MockBean
+  private FeedService feedService;
 
-    private final ObjectMapper objectMapper = new ObjectMapper();
+  @MockBean
+  private UserService userService;
 
-    private User mockUser;
-    private Feed mockFeed;
+  private final ObjectMapper objectMapper = new ObjectMapper();
 
-    @BeforeEach
-    public void setUp() {
-        mockMvc = MockMvcBuilders
-                .webAppContextSetup(context)
-                .apply(SecurityMockMvcConfigurers.springSecurity()) // 스프링 시큐리티 설정 적용
-                .defaultRequest(post("/**").with(csrf()))
-                .defaultRequest(patch("/**").with(csrf()))
-                .defaultRequest(delete("/**").with(csrf()))
-                .build();
-    }
+  private User mockUser;
+  private Feed mockFeed;
+
+  @BeforeEach
+  public void setUp(){
+    mockMvc = MockMvcBuilders
+        .webAppContextSetup(context)
+        .apply(SecurityMockMvcConfigurers.springSecurity()) // 스프링 시큐리티 설정 적용
+        .defaultRequest(post("/**").with(csrf()))
+        .defaultRequest(patch("/**").with(csrf()))
+        .defaultRequest(delete("/**").with(csrf()))
+        .build();
+  }
 
 
-    @DisplayName("게시물 생성 요청 api가 성공한다.")
-    @Test
-    @WithMockUser(roles = {"USER"})
-    public void 게시물_생성() throws Exception {
-        // Given
-        FeedCreateRequest request = FeedCreateRequest.builder()
-                .userId(1L)
-                .title("제목")
-                .content("내용")
-                .type(FeedType.FACEBOOK)
-                .build();
+  @DisplayName("게시물 생성 요청 api가 성공한다.")
+  @Test
+  @WithMockUser(roles = {"USER"})
+  public void 게시물_생성() throws Exception {
+    // Given
+    FeedCreateRequest request = FeedCreateRequest.builder()
+        .userId(1L)
+        .title("제목")
+        .content("내용")
+        .type(FeedType.FACEBOOK)
+        .build();
 
-        String requestJson = objectMapper.writeValueAsString(request);
+    String requestJson = objectMapper.writeValueAsString(request);
 
-        // When & Then
-        mockMvc.perform(post("/api/v1/feeds")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(requestJson))
-                .andExpect(status().isCreated());
-    }
+    // When & Then
+    mockMvc.perform(post("/api/v1/feeds")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(requestJson))
+        .andExpect(status().isCreated());
+  }
 
     @DisplayName("게시물 수정 요청 api가 성공한다.")
     @Test
