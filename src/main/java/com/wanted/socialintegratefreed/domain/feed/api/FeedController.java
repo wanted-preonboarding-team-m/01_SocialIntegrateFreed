@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/v1/feeds")
 public class FeedController {
 
+
     private final FeedService feedService;
     private final UserService userService;
 
