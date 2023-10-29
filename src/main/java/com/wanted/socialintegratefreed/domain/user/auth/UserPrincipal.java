@@ -3,14 +3,8 @@ package com.wanted.socialintegratefreed.domain.user.auth;
 import com.wanted.socialintegratefreed.domain.user.entity.User;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User.UserBuilder;
 import org.springframework.security.core.userdetails.UserDetails;
 
 /**

@@ -6,7 +6,6 @@ import static com.wanted.socialintegratefreed.domain.user.utils.UserUtils.genera
 import com.wanted.socialintegratefreed.domain.user.constant.UserEnable;
 import com.wanted.socialintegratefreed.domain.user.dao.UserRepository;
 import com.wanted.socialintegratefreed.domain.user.dto.request.UserRequestAuthCodeDto;
-
 import com.wanted.socialintegratefreed.domain.user.dto.request.UserSignUpRequestDto;
 import com.wanted.socialintegratefreed.domain.user.dto.response.UserAccessTokenDto;
 import com.wanted.socialintegratefreed.domain.user.dto.response.UserResponseAuthCodeDto;
@@ -16,7 +15,6 @@ import com.wanted.socialintegratefreed.global.error.BusinessException;
 import com.wanted.socialintegratefreed.global.error.ErrorCode;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
-import jakarta.validation.Valid;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -24,8 +22,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 
 /**
  * 전반적인 User 비지니스 로직
@@ -102,6 +98,7 @@ public class UserService {
         if (getUserSession != null) { // 인증코드가 맞고, 세션이 없지않으면
             processVerifiedUser(getUserSession); // USER_ENABLE로 유저 업데이트
             session.removeAttribute("user"); // 이후 세션 삭제
+
         }
     }
 

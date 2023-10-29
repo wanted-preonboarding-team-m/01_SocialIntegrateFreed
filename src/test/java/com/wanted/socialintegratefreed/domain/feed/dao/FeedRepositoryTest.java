@@ -1,22 +1,34 @@
 package com.wanted.socialintegratefreed.domain.feed.dao;
 
+import static com.wanted.socialintegratefreed.domain.feed.constant.FeedType.FACEBOOK;
+import static com.wanted.socialintegratefreed.domain.feed.constant.SearchType.DATE;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.wanted.socialintegratefreed.domain.feed.constant.FeedType;
+import com.wanted.socialintegratefreed.domain.feed.constant.SearchValue;
 import com.wanted.socialintegratefreed.domain.feed.dto.request.FeedCreateRequest;
+import com.wanted.socialintegratefreed.domain.feed.dto.request.FeedSearchCond;
 import com.wanted.socialintegratefreed.domain.feed.entity.Feed;
+import com.wanted.socialintegratefreed.domain.hashtag.dao.HashtagRepository;
+import com.wanted.socialintegratefreed.domain.hashtag.entity.Hashtag;
+import com.wanted.socialintegratefreed.domain.tagmatching.dao.TagMatchingRepository;
+import com.wanted.socialintegratefreed.domain.tagmatching.entity.TagMatching;
+import com.wanted.socialintegratefreed.domain.user.config.JpaConfig;
 import com.wanted.socialintegratefreed.domain.user.constant.UserEnable;
 import com.wanted.socialintegratefreed.domain.user.dao.UserRepository;
 import com.wanted.socialintegratefreed.domain.user.entity.User;
+import java.time.LocalDateTime;
 import java.util.NoSuchElementException;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.context.annotation.Import;
 
+@Import(JpaConfig.class) // Auditing 기능을 사용하기 위해 JpaConfig를 import
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 public class FeedRepositoryTest{
@@ -26,6 +38,12 @@ public class FeedRepositoryTest{
 
   @Autowired
   private UserRepository userRepository;
+
+  @Autowired
+  private HashtagRepository hashtagRepository; // 통계 결과 테스트를 위해 추가
+
+  @Autowired
+  private TagMatchingRepository tagMatchingRepository; // 통계 결과 테스트를 위해 추가
 
   private Feed feed;
   private User user;
@@ -60,7 +78,7 @@ public class FeedRepositoryTest{
     Feed feed = createFeed("원래 제목", "원래 내용", FeedType.INSTAGRAM, user);
 
     // When
-    feed.update(new Feed("수정 제목", "수정 내용", 0, 0, 0, FeedType.FACEBOOK, user));
+    feed.update(new Feed("수정 제목", "수정 내용", 0, 0, 0, FACEBOOK, user));
     feedRepository.save(feed);
 
     // Then
@@ -68,7 +86,7 @@ public class FeedRepositoryTest{
     assertThat(updatedFeed).isNotNull();
     assertThat(updatedFeed.getTitle()).isEqualTo("수정 제목");
     assertThat(updatedFeed.getContent()).isEqualTo("수정 내용");
-    assertThat(updatedFeed.getType()).isEqualTo(FeedType.FACEBOOK);
+    assertThat(updatedFeed.getType()).isEqualTo(FACEBOOK);
   }
 
   @DisplayName("게시글이 성공적으로 삭제된다.")
@@ -76,7 +94,7 @@ public class FeedRepositoryTest{
   public void 게시물_삭제() {
     // Given
     User user = createUser("test@example.com", "1234");
-    Feed feed = createFeed("제목", "내용", FeedType.FACEBOOK, user);
+    Feed feed = createFeed("제목", "내용", FACEBOOK, user);
 
     // When
     feedRepository.delete(feed);
@@ -91,7 +109,7 @@ public class FeedRepositoryTest{
   public void 게시물_상세_조회() {
     // Given
     User user = createUser("test@example.com", "1234");
-    Feed createFeed = createFeed("제목", "내용", FeedType.FACEBOOK, user);
+    Feed createFeed = createFeed("제목", "내용", FACEBOOK, user);
     // When
     Feed searchFeed = feedRepository.findById(createFeed.getFeedId()).orElse(null);
 
@@ -100,7 +118,70 @@ public class FeedRepositoryTest{
     assertThat(searchFeed.getTitle()).isEqualTo(createFeed.getTitle());
     assertThat(searchFeed.getContent()).isEqualTo(createFeed.getContent());
     assertThat(searchFeed.getType()).isEqualTo(createFeed.getType());
+  }
 
+  @DisplayName("게시글 통계 결과가 성공적으로 반환된다: 게시글 개수")
+  @Test
+  void makeStatisticsSuccessSearchingCount() {
+    // 테스트용 게시물과 해시태그를 연결
+    Feed feed = Feed.builder()
+        .title("제목")
+        .content("내용")
+        .type(FACEBOOK)
+        .viewCount(1)
+        .likeCount(2)
+        .shareCount(3)
+        .user(user)
+        .build();
+    feedRepository.save(feed);
+    Hashtag hashtag = createHashtag("해시태그1");
+    createTagMatching(feed, hashtag);
+
+    // search 메소드의 파라미터들
+    FeedSearchCond searchCond = FeedSearchCond.builder()
+        .hashtag("해시태그1")
+        .type(DATE)
+        .start(feed.getCreatedAt().minusDays(5))
+        .end(feed.getCreatedAt().plusDays(5))
+        .value(SearchValue.COUNT)
+        .build();
+    LocalDateTime date = feed.getCreatedAt();
+
+    Long count = feedRepository.search(date, searchCond);
+
+    assertThat(count).isEqualTo(1);
+  }
+
+  @DisplayName("게시글 통계 결과가 성공적으로 반환된다: 좋아요 개수")
+  @Test
+  void makeStatisticsSuccessSearchingLikeCount() {
+    // 테스트용 게시물과 해시태그를 연결
+    Feed feed = Feed.builder()
+        .title("제목")
+        .content("내용")
+        .type(FACEBOOK)
+        .viewCount(1)
+        .likeCount(2)
+        .shareCount(3)
+        .user(user)
+        .build();
+    feedRepository.save(feed);
+    Hashtag hashtag = createHashtag("해시태그1");
+    createTagMatching(feed, hashtag);
+
+    // search 메소드의 파라미터들
+    FeedSearchCond searchCond = FeedSearchCond.builder()
+        .hashtag("해시태그1")
+        .type(DATE)
+        .start(feed.getCreatedAt().minusDays(5))
+        .end(feed.getCreatedAt().plusDays(5))
+        .value(SearchValue.LIKE_COUNT)
+        .build();
+    LocalDateTime date = feed.getCreatedAt();
+
+    Long likeCount = feedRepository.search(date, searchCond);
+
+    assertThat(likeCount).isEqualTo(2);
   }
 
   /**
@@ -127,6 +208,16 @@ public class FeedRepositoryTest{
   private Feed createFeed(String title, String content, FeedType type, User user) {
     Feed feed = new Feed(title, content, 0, 0, 0, type, user);
     return feedRepository.save(feed);
+  }
+
+  private Hashtag createHashtag(String name) {
+    Hashtag hashtag = new Hashtag(name);
+    return hashtagRepository.save(hashtag);
+  }
+
+  private TagMatching createTagMatching(Feed feed, Hashtag hashtag) {
+    TagMatching tagMatching = new TagMatching(feed, hashtag);
+    return tagMatchingRepository.save(tagMatching);
   }
 
   /**

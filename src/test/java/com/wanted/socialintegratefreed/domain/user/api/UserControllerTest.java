@@ -1,26 +1,14 @@
 package com.wanted.socialintegratefreed.domain.user.api;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wanted.socialintegratefreed.config.restdocs.AbstractRestDocsTests;
 import com.wanted.socialintegratefreed.config.restdocs.RestDocsConfiguration;
-
 import com.wanted.socialintegratefreed.domain.user.dto.request.UserSignUpRequestDto;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpSession;
-import org.aspectj.lang.annotation.Before;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.test.web.servlet.RequestBuilder;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 @WebMvcTest(RestDocsConfiguration.class)
 class UserControllerTest extends AbstractRestDocsTests {
