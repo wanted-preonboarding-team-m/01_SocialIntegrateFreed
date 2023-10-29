@@ -2,12 +2,10 @@ package com.wanted.socialintegratefreed.domain.feed.application;
 
 import static java.time.LocalDateTime.now;
 import static org.assertj.core.api.Assertions.assertThat;
-
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.BDDMockito.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
-
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.wanted.socialintegratefreed.domain.feed.constant.FeedType;
 import com.wanted.socialintegratefreed.domain.feed.constant.SearchType;
@@ -20,11 +18,7 @@ import com.wanted.socialintegratefreed.domain.feed.dto.response.FeedSearchRespon
 import com.wanted.socialintegratefreed.domain.feed.entity.Feed;
 import com.wanted.socialintegratefreed.domain.user.entity.User;
 import java.util.Optional;
-
 import org.assertj.core.api.Assertions;
-
-import org.junit.jupiter.api.AfterEach;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -133,6 +127,7 @@ public class FeedServiceTest {
     FeedSearchResponse response = feedService.search(searchCond);
 
     Assertions.assertThat(response.getSearchResult()).isNotNull();
+  }
 
   @DisplayName("게시물 제목만 성공적으로 수정됩니다.")
   @Test
