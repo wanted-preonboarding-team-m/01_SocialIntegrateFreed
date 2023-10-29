@@ -8,14 +8,12 @@
 5. [ERD](#ERD)
 6. [구현 과정](#구현-과정)
 7. [담당한 역할](#담당한-역할)
-8. [API 명세서](#API-명세서)
-9. [테스트](#테스트)
 
 ## 개발 기간
-2023-10-25 ~
+2023-10-25 ~ 2023-10-30
 
 ## 기술 스택
-<img src="https://img.shields.io/badge/spring-6DB33F?style=for-the-badge&logo=spring&logoColor=white" alt="spring"/> <img src="https://img.shields.io/badge/spring data jpa-6DB33F?style=for-the-badge&logo=spring&logoColor=white" alt="spring data jpa"/> <img src="https://img.shields.io/badge/spring security-6DB33F?style=for-the-badge&logo=springSecurity&logoColor=white" alt="spring security"/> <img src="https://img.shields.io/badge/mysql-4479A1?style=for-the-badge&logo=mysql&logoColor=white" alt="mysql"/>
+<img src="https://img.shields.io/badge/spring-6DB33F?style=for-the-badge&logo=spring&logoColor=white" alt="spring"/> <img src="https://img.shields.io/badge/spring data jpa-6DB33F?style=for-the-badge&logo=spring&logoColor=white" alt="spring data jpa"/> <img src="https://img.shields.io/badge/querydsl-6DB33F?style=for-the-badge&logo=spring&logoColor=white" alt="spring"/> <img src="https://img.shields.io/badge/spring security-6DB33F?style=for-the-badge&logo=springSecurity&logoColor=white" alt="spring security"/> <img src="https://img.shields.io/badge/mysql-4479A1?style=for-the-badge&logo=mysql&logoColor=white" alt="mysql"/>
 
 ## 프로젝트 개요
 여러 SNS의 게시물들을 한번에 관리하는 서비스입니다.
@@ -61,14 +59,14 @@
 3. 게시물 기능 구현
     * [게시물 엔티티 생성](https://github.com/wanted-preonboarding-team-m/01_SocialIntegrateFreed/issues/7)
     * [게시물 CRUD 구현](https://github.com/wanted-preonboarding-team-m/01_SocialIntegrateFreed/issues/11)
+    * [좋아요 및 공유 기능](https://github.com/wanted-preonboarding-team-m/01_SocialIntegrateFreed/issues/33)
+  
+4. 통계 기능 구현
+   * [쿼리 파라미터로 검색하여 통계 결과 생성](https://github.com/wanted-preonboarding-team-m/01_SocialIntegrateFreed/issues/22)
 
 ## 담당한 역할
 * [김정훈](https://github.com/jhva): 유저 인증/인가
 * [곽민성](https://github.com/kawkmin): 프로젝트 환경 설정
-* [김선재](https://github.com/mizuirohoshi7): docs 작성
-* [송인규](https://github.com/IngyuSong): 게시물 CRUD
+* [김선재](https://github.com/mizuirohoshi7): 통계, 좋아요 및 공유 기능
 * [최소영](https://github.com/soyeong125): 게시물 CRUD
-
-## API 명세서
-
-## 테스트
+* 코드 리뷰 및 리팩토링은 조원 모두가 함께 했습니다.
