@@ -78,6 +78,11 @@ public class FeedService {
    */
 
   public FeedDetailResponse getFeedById(Long feedId) {
+    Feed feed = findFeedIdReturnFeed(feedId);
+
+    // 상세 조회시, 게시물 조회수 증가
+    feed.addViewCount();
+
     return new FeedDetailResponse(findFeedIdReturnFeed(feedId));
   }
 
@@ -97,14 +102,14 @@ public class FeedService {
    *
    * @param feedId 좋아요할 게시물 Id
    */
-  public void like(Long feedId) {
+  public void addLike(Long feedId) {
     Feed feed = findFeedIdReturnFeed(feedId);
 
     // 게시물의 SNS 타입에 따라 다른 엔드포인트의 외부 api를 호출한다.
     callApi(feed, LIKE);
 
     // 게시물의 좋아요 수가 1 증가한다.
-    feed.like();
+    feed.addLikeCount();
   }
 
   /**
@@ -112,14 +117,14 @@ public class FeedService {
    *
    * @param feedId 공유할 게시물 Id
    */
-  public void share(Long feedId) {
+  public void addShare(Long feedId) {
     Feed feed = findFeedIdReturnFeed(feedId);
 
     // 게시물의 SNS 타입에 따라 다른 엔드포인트의 외부 api를 호출한다.
     callApi(feed, SHARE);
 
     // 게시물의 공유 수가 1 증가한다.
-    feed.share();
+    feed.addShareCount();
   }
 
   /**

@@ -98,16 +98,23 @@ public class Feed extends BaseTimeEntity {
   }
 
   /**
+   * 조회수 증가
+   */
+  public void addViewCount() {
+    this.viewCount++;
+  }
+
+  /**
    * 좋아요수 증가
    */
-  public void like() {
+  public void addLikeCount() {
     this.likeCount++;
   }
 
   /**
    * 공유수 증가
    */
-  public void share() {
+  public void addShareCount() {
     this.shareCount++;
   }
 }

@@ -137,9 +137,9 @@ public class FeedController {
    * @return 200, 게시물 id
    */
   @PostMapping("/{feedId}/like")
-  public ResponseEntity<ApiResponse> like(@PathVariable Long feedId) {
+  public ResponseEntity<ApiResponse> addLike(@PathVariable Long feedId) {
     // 게시물 좋아요
-    feedService.like(feedId);
+    feedService.addLike(feedId);
 
     return ResponseEntity.ok(ApiResponse.toSuccessForm(feedId));
   }
@@ -151,9 +151,9 @@ public class FeedController {
    * @return 200, 게시물 id
    */
   @PostMapping("/{feedId}/share")
-  public ResponseEntity<ApiResponse> share(@PathVariable Long feedId) {
+  public ResponseEntity<ApiResponse> addShare(@PathVariable Long feedId) {
     // 게시물 공유
-    feedService.share(feedId);
+    feedService.addShare(feedId);
 
     return ResponseEntity.ok(ApiResponse.toSuccessForm(feedId));
   }

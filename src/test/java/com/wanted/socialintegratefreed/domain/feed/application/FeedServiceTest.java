@@ -198,7 +198,7 @@ public class FeedServiceTest {
     given(feedRepository.findById(1L)).willReturn(Optional.of(mockFeed));
 
     // When
-    feedService.like(1L);
+    feedService.addLike(1L);
 
     // Then
     assertThat(mockFeed.getLikeCount()).isEqualTo(1);
@@ -211,7 +211,7 @@ public class FeedServiceTest {
     given(feedRepository.findById(1L)).willReturn(Optional.of(mockFeed));
 
     // When
-    feedService.share(1L);
+    feedService.addShare(1L);
 
     // Then
     assertThat(mockFeed.getShareCount()).isEqualTo(1);
