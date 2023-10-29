@@ -3,16 +3,12 @@ package com.wanted.socialintegratefreed.domain.user.api;
 
 import com.wanted.socialintegratefreed.domain.user.application.UserService;
 import com.wanted.socialintegratefreed.domain.user.dto.request.UserRequestAuthCodeDto;
-
 import com.wanted.socialintegratefreed.domain.user.dto.request.UserSignUpRequestDto;
 import com.wanted.socialintegratefreed.domain.user.dto.response.UserAccessTokenDto;
 import com.wanted.socialintegratefreed.domain.user.dto.response.UserResponseAuthCodeDto;
 import com.wanted.socialintegratefreed.global.format.response.ApiResponse;
-import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
-import java.net.http.HttpResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -83,5 +79,4 @@ public class UserController {
         UserResponseAuthCodeDto codeDto = userService.refreshCode(email, httpServletRequest);
         return ResponseEntity.ok(ApiResponse.toSuccessForm(codeDto));
     }
-
 }
