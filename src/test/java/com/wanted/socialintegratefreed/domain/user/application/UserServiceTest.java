@@ -30,6 +30,7 @@ import java.util.Map;
 import java.util.Optional;
 import javax.crypto.SecretKey;
 import org.junit.jupiter.api.Assertions;
+import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;

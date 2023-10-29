@@ -19,12 +19,12 @@ import com.wanted.socialintegratefreed.domain.user.application.UserService;
 import com.wanted.socialintegratefreed.domain.user.config.WebSecurityConfig;
 import com.wanted.socialintegratefreed.domain.user.constant.UserEnable;
 import com.wanted.socialintegratefreed.domain.user.dto.request.UserRequestAuthCodeDto;
+import com.wanted.socialintegratefreed.config.restdocs.AbstractRestDocsTests;
+import com.wanted.socialintegratefreed.config.restdocs.RestDocsConfiguration;
 import com.wanted.socialintegratefreed.domain.user.dto.request.UserSignUpRequestDto;
 import com.wanted.socialintegratefreed.domain.user.jwt.CustomAccessDeniedHandler;
 import com.wanted.socialintegratefreed.domain.user.jwt.JwtTokenProvider;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpSession;
-import org.aspectj.lang.annotation.Before;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -45,6 +45,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
+import org.springframework.mock.web.MockHttpServletRequest;
 
 @WebMvcTest(UserController.class)
 @Import(WebSecurityConfig.class)
