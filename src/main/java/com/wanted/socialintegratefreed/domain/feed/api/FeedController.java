@@ -138,7 +138,6 @@ public class FeedController {
    */
   @PostMapping("/{feedId}/like")
   public ResponseEntity<ApiResponse> like(@PathVariable Long feedId) {
-
     // 게시물 좋아요
     feedService.like(feedId);
 

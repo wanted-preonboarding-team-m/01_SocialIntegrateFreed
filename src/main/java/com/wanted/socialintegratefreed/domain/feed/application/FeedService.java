@@ -17,13 +17,21 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestTemplate;
 
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class FeedService {
 
+  // 외부 api 호출 메소드에서 좋아요와 공유를 구분하기 위한 상수
+  private static final String LIKE = "likes";
+  private static final String SHARE = "share";
+
   private final FeedRepository feedRepository;
+
+  // 좋아요, 공유시 외부 api 호출을 위한 RestTemplate
+  private final RestTemplate restTemplate;
 
   /**
    * 게시물 생성
@@ -76,7 +84,7 @@ public class FeedService {
   /**
    * 게시물 id로 게시물 조회
    *
-   * @param feedId
+   * @param feedId 조회할 게시물 Id
    * @return Feed
    */
   public Feed findFeedIdReturnFeed(Long feedId){
@@ -91,7 +99,20 @@ public class FeedService {
    */
   public void like(Long feedId) {
     Feed feed = findFeedIdReturnFeed(feedId);
+
+    // 게시물의 SNS 타입에 따라 다른 엔드포인트의 외부 api를 호출한다.
+    callApi(feed, LIKE);
+
+    // 게시물의 좋아요 수가 1 증가한다.
     feed.like();
+  }
+
+  private void callApi(Feed feed, String likeOrShare) {
+    // 게시물의 SNS 타입에 따라 다른 엔드포인트의 외부 api를 호출한다.
+    String url = feed.getType().getUrl() + "/" + likeOrShare + "/" + feed.getFeedId();
+
+    // 외부 api 호출 (현재 실제 동작은 구현 요구사항이 아니므로 반환 타입은 임시로 String.class로 둔다.)
+    restTemplate.postForEntity(url, null, String.class);
   }
 
   /**
