@@ -107,6 +107,27 @@ public class FeedService {
     feed.like();
   }
 
+  /**
+   * 게시물 공유
+   *
+   * @param feedId 공유할 게시물 Id
+   */
+  public void share(Long feedId) {
+    Feed feed = findFeedIdReturnFeed(feedId);
+
+    // 게시물의 SNS 타입에 따라 다른 엔드포인트의 외부 api를 호출한다.
+    callApi(feed, SHARE);
+
+    // 게시물의 공유 수가 1 증가한다.
+    feed.share();
+  }
+
+  /**
+   * 좋아요나 공유 요청이 들어왔을 경우, 지정된 SNS의 외부 api를 호출한다.
+   *
+   * @param feed 게시물
+   * @param likeOrShare 요청이 좋아요인지 공유인지 확인
+   */
   private void callApi(Feed feed, String likeOrShare) {
     // 게시물의 SNS 타입에 따라 다른 엔드포인트의 외부 api를 호출한다.
     String url = feed.getType().getUrl() + "/" + likeOrShare + "/" + feed.getFeedId();

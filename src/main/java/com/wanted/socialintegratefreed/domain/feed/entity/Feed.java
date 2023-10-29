@@ -103,4 +103,11 @@ public class Feed extends BaseTimeEntity {
   public void like() {
     this.likeCount++;
   }
+
+  /**
+   * 공유수 증가
+   */
+  public void share() {
+    this.shareCount++;
+  }
 }

@@ -141,6 +141,16 @@ public class FeedControllerTest extends AbstractRestDocsTests {
         .andExpect(status().isOk());
     }
 
+    @DisplayName("게시물 공유 api가 성공한다.")
+    @Test
+    @WithMockUser(roles = {"USER"})
+    void 게시물_공유() throws Exception {
+      Long feedId = 1L;
+
+      mockMvc.perform(post("/api/v1/feeds/" + feedId + "/share"))
+        .andExpect(status().isOk());
+    }
+
   @DisplayName("게시물 통계 요청 api가 성공한다.")
   @Test
   @WithMockUser(roles = {"USER"})

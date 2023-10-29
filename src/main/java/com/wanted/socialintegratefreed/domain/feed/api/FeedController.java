@@ -145,6 +145,20 @@ public class FeedController {
   }
 
   /**
+   * 게시물 공유 호출 api
+   *
+   * @param feedId 게시물 id
+   * @return 200, 게시물 id
+   */
+  @PostMapping("/{feedId}/share")
+  public ResponseEntity<ApiResponse> share(@PathVariable Long feedId) {
+    // 게시물 공유
+    feedService.share(feedId);
+
+    return ResponseEntity.ok(ApiResponse.toSuccessForm(feedId));
+  }
+
+  /**
    * 게시물 통계 조회 api
    *
    * @param params 쿼리 파라미터

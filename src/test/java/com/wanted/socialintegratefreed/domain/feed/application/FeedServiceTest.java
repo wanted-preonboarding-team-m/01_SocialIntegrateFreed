@@ -26,6 +26,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.web.client.RestTemplate;
 
 @ExtendWith(MockitoExtension.class)
 public class FeedServiceTest {
@@ -35,6 +36,9 @@ public class FeedServiceTest {
 
   @Mock
   private FeedRepository feedRepository;
+
+  @Mock
+  RestTemplate restTemplate;
 
   private Feed mockFeed;
   private User mockUser;
@@ -198,6 +202,19 @@ public class FeedServiceTest {
 
     // Then
     assertThat(mockFeed.getLikeCount()).isEqualTo(1);
+  }
+
+  @DisplayName("게시물 공유수를 증가시킵니다.")
+  @Test
+  void 게시물_공유수_증가() {
+    // Given
+    given(feedRepository.findById(1L)).willReturn(Optional.of(mockFeed));
+
+    // When
+    feedService.share(1L);
+
+    // Then
+    assertThat(mockFeed.getShareCount()).isEqualTo(1);
   }
 }
 
