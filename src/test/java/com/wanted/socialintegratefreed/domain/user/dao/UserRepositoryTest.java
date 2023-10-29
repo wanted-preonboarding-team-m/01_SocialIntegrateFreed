@@ -32,23 +32,23 @@ public class UserRepositoryTest {
 
     @Test
     @DisplayName("회원 등록에 정상적으로 성공한다 ")
-    void 회원_등록에_성공() {
+    void 회원_등록_성공() {
         User newUser = userRepository.save(user);
         Assertions.assertEquals(user.getEmail(), newUser.getEmail());
         Assertions.assertEquals(user.getPassword(), newUser.getPassword());
         Assertions.assertEquals(user, newUser);
     }
 
-  @DisplayName("사용자가 정상적으로 조회된다.")
-  @Test
-  void 사용자_조회() {
+    @DisplayName("사용자가 정상적으로 조회된다.")
+    @Test
+    void 사용자_조회() {
 
-    //When
-    User savedUser = userRepository.save(user);
+        //When
+        User savedUser = userRepository.save(user);
 
-    // Then
-    userRepository.findById(savedUser.getUserId())
-        .orElseThrow(() -> new NoSuchElementException());
-  }
+        // Then
+        userRepository.findById(savedUser.getUserId())
+                .orElseThrow(() -> new NoSuchElementException());
+    }
 }
 

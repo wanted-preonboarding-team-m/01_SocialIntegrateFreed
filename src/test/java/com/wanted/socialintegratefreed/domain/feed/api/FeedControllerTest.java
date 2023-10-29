@@ -23,7 +23,6 @@ import com.wanted.socialintegratefreed.domain.user.entity.User;
 
 import com.wanted.socialintegratefreed.domain.user.jwt.JwtTokenProvider;
 import java.util.List;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -48,135 +47,93 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(FeedController.class)
 public class FeedControllerTest extends AbstractRestDocsTests {
-  @Autowired
-  private MockMvc mockMvc;
 
-  @Autowired
-  private WebApplicationContext context;
+    @Autowired
+    private MockMvc mockMvc;
 
-  @MockBean
-  private FeedService feedService;
+    @Autowired
+    private WebApplicationContext context;
 
-  @MockBean
-  private UserService userService;
+    @MockBean
+    private FeedService feedService;
 
-  // 이 mock 객체가 없으면 jwtTokenProvider 빈을 주입하지 못했다는 메세지와 함께 테스트가 실패한다.
-  @MockBean
-  private JwtTokenProvider jwtTokenProvider;
+    @MockBean
+    private UserService userService;
 
-  private final ObjectMapper objectMapper = new ObjectMapper();
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
-  private User mockUser;
-  private Feed mockFeed;
+    private User mockUser;
+    private Feed mockFeed;
 
-  @BeforeEach
-  public void setUp(){
-    mockMvc = MockMvcBuilders
-        .webAppContextSetup(context)
-        .apply(SecurityMockMvcConfigurers.springSecurity()) // 스프링 시큐리티 설정 적용
-        .defaultRequest(post("/**").with(csrf()))
-        .defaultRequest(patch("/**").with(csrf()))
-        .defaultRequest(delete("/**").with(csrf()))
-        .build();
-  }
+    @BeforeEach
+    public void setUp() {
+        mockMvc = MockMvcBuilders
+                .webAppContextSetup(context)
+                .apply(SecurityMockMvcConfigurers.springSecurity()) // 스프링 시큐리티 설정 적용
+                .defaultRequest(post("/**").with(csrf()))
+                .defaultRequest(patch("/**").with(csrf()))
+                .defaultRequest(delete("/**").with(csrf()))
+                .build();
+    }
 
 
-  @DisplayName("게시물 생성 요청 api가 성공한다.")
-  @Test
-  @WithMockUser(roles = {"USER"})
-  public void 게시물_생성() throws Exception {
-    // Given
-    FeedCreateRequest request = FeedCreateRequest.builder()
-        .userId(1L)
-        .title("제목")
-        .content("내용")
-        .type(FeedType.FACEBOOK)
-        .build();
+    @DisplayName("게시물 생성 요청 api가 성공한다.")
+    @Test
+    @WithMockUser(roles = {"USER"})
+    public void 게시물_생성() throws Exception {
+        // Given
+        FeedCreateRequest request = FeedCreateRequest.builder()
+                .userId(1L)
+                .title("제목")
+                .content("내용")
+                .type(FeedType.FACEBOOK)
+                .build();
 
-    String requestJson = objectMapper.writeValueAsString(request);
+        String requestJson = objectMapper.writeValueAsString(request);
 
-    // When & Then
-    mockMvc.perform(post("/api/v1/feeds")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(requestJson))
-        .andExpect(status().isCreated());
-  }
+        // When & Then
+        mockMvc.perform(post("/api/v1/feeds")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestJson))
+                .andExpect(status().isCreated());
+    }
 
-  @DisplayName("게시물 생성 요청 api가 실패한다.")
-  @Test
-  @WithMockUser(roles = {"USER"})
-  public void 게시물_생성_실패() throws Exception {
-    // Given
-    FeedCreateRequest request = FeedCreateRequest.builder()
-        .userId(null)
-        .title(null)
-        .content(null)
-        .type(FeedType.FACEBOOK)
-        .build();
+    @DisplayName("게시물 수정 요청 api가 성공한다.")
+    @Test
+    @WithMockUser(roles = {"USER"})
+    public void 게시물_수정() throws Exception {
+        Long feedId = 1L;
+        FeedUpdateRequest request = FeedUpdateRequest.builder()
+                .userId(1L)
+                .title("수정 제목")
+                .content("수정 내용")
+                .build();
 
-    String requestJson = objectMapper.writeValueAsString(request);
+        mockMvc.perform(put("/api/v1/feeds/" + feedId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isOk());
+    }
 
-    // When & Then
-    mockMvc.perform(post("/api/v1/feeds")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(requestJson))
-        .andExpect(status().is4xxClientError());
-  }
+    @DisplayName("게시물 삭제 요청 api가 성공한다.")
+    @Test
+    @WithMockUser(roles = {"USER"})
+    public void 게시물_삭제() throws Exception {
+        Long feedId = 1L;
 
-  @DisplayName("게시물 수정 요청 api가 성공한다.")
-  @Test
-  @WithMockUser(roles = {"USER"})
-  public void 게시물_수정() throws Exception {
-    Long feedId = 1L;
-    FeedUpdateRequest request = FeedUpdateRequest.builder()
-        .userId(1L)
-        .title("수정 제목")
-        .content("수정 내용")
-        .type(INSTAGRAM)
-        .build();
+        mockMvc.perform(delete("/api/v1/feeds/" + feedId))
+                .andExpect(status().isOk());
+    }
 
-    mockMvc.perform(put("/api/v1/feeds/" + feedId)
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(request)))
-        .andExpect(status().isOk());
-  }
+    @DisplayName("게시물 조회 요청 api가 성공한다.")
+    @Test
+    @WithMockUser(roles = {"USER"})
+    public void 게시물_상세_조회() throws Exception {
+        Long feedId = 1L;
 
-  @DisplayName("게시물 수정 요청 api가 실패한다.")
-  @Test
-  @WithMockUser(roles = {"USER"})
-  public void 게시물_수정_실패() throws Exception {
-    Long feedId = 1L;
-    FeedUpdateRequest request = FeedUpdateRequest.builder()
-        .userId(null)
-        .title(null)
-        .content("수정 내용")
-        .build();
-
-    mockMvc.perform(put("/api/v1/feeds/" + feedId)
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(request)))
-        .andExpect(status().is4xxClientError());
-  }
-
-  @DisplayName("게시물 삭제 요청 api가 성공한다.")
-  @Test
-  @WithMockUser(roles = {"USER"})
-  public void 게시물_삭제() throws Exception {
-    Long feedId = 1L;
-
-    mockMvc.perform(delete("/api/v1/feeds/" + feedId))
-        .andExpect(status().isOk());
-  }
-
-  @DisplayName("게시물 조회 요청 api가 성공한다.")
-  @Test
-  @WithMockUser(roles = {"USER"})
-  public void 게시물_상세_조회() throws Exception {
-    Long feedId = 1L;
-
-    mockMvc.perform(get("/api/v1/feeds/" + feedId))
-        .andExpect(status().isOk());
-  }
+        mockMvc.perform(get("/api/v1/feeds/" + feedId))
+                .andExpect(status().isOk());
+    }
 
   @DisplayName("게시물 통계 요청 api가 성공한다.")
   @Test

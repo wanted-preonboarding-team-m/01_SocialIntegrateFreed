@@ -79,5 +79,4 @@ public class UserController {
         UserResponseAuthCodeDto codeDto = userService.refreshCode(email, httpServletRequest);
         return ResponseEntity.ok(ApiResponse.toSuccessForm(codeDto));
     }
-
 }

@@ -53,7 +53,7 @@ public class WebSecurityConfig {
                                 "/api/v1/user/login").permitAll())
                 .authorizeHttpRequests(
                         //api/v1/board 는 USER_ENABLED한 사람만 요청이가능함
-                        request -> request.requestMatchers("/api/v1/board/**")
+                        request -> request.requestMatchers("/api/v1/feeds/**")
                                 .hasRole(UserEnable.USER_ENABLED.toString()))
                 // 들어오는 요청에 대해서 헤더안에 있는 Jwt를 체크
                 .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider),
