@@ -75,7 +75,7 @@ public class FeedController {
    * 게시물 수정 api
    *
    * @param feedId 수정할 게시물 Id
-   * @param request
+   * @param request 수정할 게시물 Id
    * @return 200
    */
   @PutMapping("/{feedId}")
@@ -92,7 +92,7 @@ public class FeedController {
     //ApiResponse를 사용한 성공 응답 생성
     ApiResponse apiResponse = ApiResponse.toSuccessForm(feedId);
 
-    return ResponseEntity.ok(ApiResponse.toSuccessForm(feedId));
+    return ResponseEntity.ok(apiResponse);
   }
 
   /**
@@ -128,6 +128,11 @@ public class FeedController {
     ApiResponse apiResponse = ApiResponse.toSuccessForm(feedResponse);
 
     return ResponseEntity.ok(apiResponse);
+  }
+
+  @PostMapping("/{feedId}/like")
+  public ResponseEntity<ApiResponse> like(@PathVariable Long feedId) {
+    return null;
   }
 
   /**
