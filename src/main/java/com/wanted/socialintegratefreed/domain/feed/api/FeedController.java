@@ -75,7 +75,7 @@ public class FeedController {
    * 게시물 수정 api
    *
    * @param feedId 수정할 게시물 Id
-   * @param request
+   * @param request 수정할 게시물 Id
    * @return 200
    */
   @PutMapping("/{feedId}")
@@ -92,7 +92,7 @@ public class FeedController {
     //ApiResponse를 사용한 성공 응답 생성
     ApiResponse apiResponse = ApiResponse.toSuccessForm(feedId);
 
-    return ResponseEntity.ok(ApiResponse.toSuccessForm(feedId));
+    return ResponseEntity.ok(apiResponse);
   }
 
   /**
@@ -128,6 +128,34 @@ public class FeedController {
     ApiResponse apiResponse = ApiResponse.toSuccessForm(feedResponse);
 
     return ResponseEntity.ok(apiResponse);
+  }
+
+  /**
+   * 게시물 좋아요 호출 api
+   *
+   * @param feedId 게시물 id
+   * @return 200, 게시물 id
+   */
+  @PostMapping("/{feedId}/like")
+  public ResponseEntity<ApiResponse> addLike(@PathVariable Long feedId) {
+    // 게시물 좋아요
+    feedService.addLike(feedId);
+
+    return ResponseEntity.ok(ApiResponse.toSuccessForm(feedId));
+  }
+
+  /**
+   * 게시물 공유 호출 api
+   *
+   * @param feedId 게시물 id
+   * @return 200, 게시물 id
+   */
+  @PostMapping("/{feedId}/share")
+  public ResponseEntity<ApiResponse> addShare(@PathVariable Long feedId) {
+    // 게시물 공유
+    feedService.addShare(feedId);
+
+    return ResponseEntity.ok(ApiResponse.toSuccessForm(feedId));
   }
 
   /**

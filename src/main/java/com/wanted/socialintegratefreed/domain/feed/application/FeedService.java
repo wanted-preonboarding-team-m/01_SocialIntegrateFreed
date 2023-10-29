@@ -17,13 +17,21 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestTemplate;
 
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class FeedService {
 
+  // 외부 api 호출 메소드에서 좋아요와 공유를 구분하기 위한 상수
+  private static final String LIKE = "likes";
+  private static final String SHARE = "share";
+
   private final FeedRepository feedRepository;
+
+  // 좋아요, 공유시 외부 api 호출을 위한 RestTemplate
+  private final RestTemplate restTemplate;
 
   /**
    * 게시물 생성
@@ -70,18 +78,67 @@ public class FeedService {
    */
 
   public FeedDetailResponse getFeedById(Long feedId) {
+    Feed feed = findFeedIdReturnFeed(feedId);
+
+    // 상세 조회시, 게시물 조회수 증가
+    feed.addViewCount();
+
     return new FeedDetailResponse(findFeedIdReturnFeed(feedId));
   }
 
   /**
    * 게시물 id로 게시물 조회
    *
-   * @param feedId
+   * @param feedId 조회할 게시물 Id
    * @return Feed
    */
   public Feed findFeedIdReturnFeed(Long feedId){
     return feedRepository.findById(feedId)
         .orElseThrow(() -> new BusinessException(feedId, "feedId", ErrorCode.FEED_NOT_FOUND));
+  }
+
+  /**
+   * 게시물 좋아요
+   *
+   * @param feedId 좋아요할 게시물 Id
+   */
+  public void addLike(Long feedId) {
+    Feed feed = findFeedIdReturnFeed(feedId);
+
+    // 게시물의 SNS 타입에 따라 다른 엔드포인트의 외부 api를 호출한다.
+    callApi(feed, LIKE);
+
+    // 게시물의 좋아요 수가 1 증가한다.
+    feed.addLikeCount();
+  }
+
+  /**
+   * 게시물 공유
+   *
+   * @param feedId 공유할 게시물 Id
+   */
+  public void addShare(Long feedId) {
+    Feed feed = findFeedIdReturnFeed(feedId);
+
+    // 게시물의 SNS 타입에 따라 다른 엔드포인트의 외부 api를 호출한다.
+    callApi(feed, SHARE);
+
+    // 게시물의 공유 수가 1 증가한다.
+    feed.addShareCount();
+  }
+
+  /**
+   * 좋아요나 공유 요청이 들어왔을 경우, 지정된 SNS의 외부 api를 호출한다.
+   *
+   * @param feed 게시물
+   * @param likeOrShare 요청이 좋아요인지 공유인지 확인
+   */
+  private void callApi(Feed feed, String likeOrShare) {
+    // 게시물의 SNS 타입에 따라 다른 엔드포인트의 외부 api를 호출한다.
+    String url = feed.getType().getUrl() + "/" + likeOrShare + "/" + feed.getFeedId();
+
+    // 외부 api 호출 (현재 실제 동작은 구현 요구사항이 아니므로 반환 타입은 임시로 String.class로 둔다.)
+    restTemplate.postForEntity(url, null, String.class);
   }
 
   /**
