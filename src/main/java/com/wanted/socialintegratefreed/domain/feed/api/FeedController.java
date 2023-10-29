@@ -130,9 +130,19 @@ public class FeedController {
     return ResponseEntity.ok(apiResponse);
   }
 
+  /**
+   * 게시물 좋아요 호출 api
+   *
+   * @param feedId 게시물 id
+   * @return 200, 게시물 id
+   */
   @PostMapping("/{feedId}/like")
   public ResponseEntity<ApiResponse> like(@PathVariable Long feedId) {
-    return null;
+
+    // 게시물 좋아요
+    feedService.like(feedId);
+
+    return ResponseEntity.ok(ApiResponse.toSuccessForm(feedId));
   }
 
   /**

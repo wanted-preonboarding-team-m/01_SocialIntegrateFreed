@@ -96,4 +96,11 @@ public class Feed extends BaseTimeEntity {
     this.content = feed.getContent() == null ? this.content : feed.getContent();
     this.type = feed.getType() == null ? this.type : feed.getType();
   }
+
+  /**
+   * 좋아요수 증가
+   */
+  public void like() {
+    this.likeCount++;
+  }
 }

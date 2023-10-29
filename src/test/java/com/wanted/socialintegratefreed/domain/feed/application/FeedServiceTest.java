@@ -52,6 +52,8 @@ public class FeedServiceTest {
         .content("내용")
         .type(FeedType.FACEBOOK)
         .user(mockUser)
+        .likeCount(0)
+        .shareCount(0)
         .build();
   }
 
@@ -183,6 +185,19 @@ public class FeedServiceTest {
     // When & Then
     assertThatThrownBy(() -> feedService.deleteFeed(2L))
         .isInstanceOf(Exception.class);
+  }
+
+  @DisplayName("게시물 좋아요수를 증가시킵니다.")
+  @Test
+  void 게시물_좋아요수_증가() {
+    // Given
+    given(feedRepository.findById(1L)).willReturn(Optional.of(mockFeed));
+
+    // When
+    feedService.like(1L);
+
+    // Then
+    assertThat(mockFeed.getLikeCount()).isEqualTo(1);
   }
 }
 

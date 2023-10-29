@@ -85,6 +85,16 @@ public class FeedService {
   }
 
   /**
+   * 게시물 좋아요
+   *
+   * @param feedId 좋아요할 게시물 Id
+   */
+  public void like(Long feedId) {
+    Feed feed = findFeedIdReturnFeed(feedId);
+    feed.like();
+  }
+
+  /**
    * 검색 조건을 입력받아서 게시물 통계 결과 생성
    *
    * @param searchCond 검색 조건
