@@ -89,19 +89,11 @@ public class Feed extends BaseTimeEntity {
   }
 
   /**
-   *
    * @param feed 수정할 feed 객체
-   *
    */
   public void update(Feed feed) {
-    if (feed.getTitle() != null) {
-      this.title = feed.getTitle();
-    }
-    if (feed.getContent() != null) {
-      this.content = feed.getContent();
-    }
-    if (feed.getType() != null) {
-      this.type = feed.getType();
-    }
+    this.title = feed.getTitle() == null ? this.title : feed.getTitle();
+    this.content = feed.getContent() == null ? this.content : feed.getContent();
+    this.type = feed.getType() == null ? this.type : feed.getType();
   }
 }
