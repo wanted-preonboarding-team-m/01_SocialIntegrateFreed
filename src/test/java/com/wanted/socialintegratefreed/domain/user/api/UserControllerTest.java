@@ -1,51 +1,28 @@
 package com.wanted.socialintegratefreed.domain.user.api;
 
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wanted.socialintegratefreed.config.restdocs.AbstractRestDocsTests;
-import com.wanted.socialintegratefreed.config.restdocs.RestDocsConfiguration;
-
-import com.wanted.socialintegratefreed.domain.feed.api.FeedController;
-import com.wanted.socialintegratefreed.domain.user.annotation.WithDisableUser;
 import com.wanted.socialintegratefreed.domain.user.annotation.WithMockCustomUser;
 import com.wanted.socialintegratefreed.domain.user.application.UserService;
 import com.wanted.socialintegratefreed.domain.user.config.WebSecurityConfig;
-import com.wanted.socialintegratefreed.domain.user.constant.UserEnable;
 import com.wanted.socialintegratefreed.domain.user.dto.request.UserRequestAuthCodeDto;
-import com.wanted.socialintegratefreed.config.restdocs.AbstractRestDocsTests;
-import com.wanted.socialintegratefreed.config.restdocs.RestDocsConfiguration;
 import com.wanted.socialintegratefreed.domain.user.dto.request.UserSignUpRequestDto;
 import com.wanted.socialintegratefreed.domain.user.jwt.CustomAccessDeniedHandler;
 import com.wanted.socialintegratefreed.domain.user.jwt.JwtTokenProvider;
-import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.RequestBuilder;
-import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
-import org.springframework.mock.web.MockHttpServletRequest;
 
 @WebMvcTest(UserController.class)
 @Import(WebSecurityConfig.class)

@@ -2,13 +2,13 @@ package com.wanted.socialintegratefreed.domain.feed.application;
 
 import com.wanted.socialintegratefreed.domain.feed.constant.SearchType;
 import com.wanted.socialintegratefreed.domain.feed.dao.FeedRepository;
+import com.wanted.socialintegratefreed.domain.feed.dto.request.FeedCreateRequest;
 import com.wanted.socialintegratefreed.domain.feed.dto.request.FeedSearchCond;
 import com.wanted.socialintegratefreed.domain.feed.dto.request.FeedUpdateRequest;
 import com.wanted.socialintegratefreed.domain.feed.dto.response.FeedDetailResponse;
 import com.wanted.socialintegratefreed.domain.feed.dto.response.FeedSearchResponse;
 import com.wanted.socialintegratefreed.domain.feed.entity.Feed;
 import com.wanted.socialintegratefreed.domain.user.entity.User;
-import com.wanted.socialintegratefreed.domain.feed.dto.request.FeedCreateRequest;
 import com.wanted.socialintegratefreed.global.error.BusinessException;
 import com.wanted.socialintegratefreed.global.error.ErrorCode;
 import java.time.LocalDateTime;

@@ -2,10 +2,8 @@ package com.wanted.socialintegratefreed.domain.user.dao;
 
 
 import com.wanted.socialintegratefreed.domain.user.entity.User;
-import org.junit.jupiter.api.Assertions;
 import java.util.NoSuchElementException;
-import org.junit.jupiter.api.AfterEach;
-
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
