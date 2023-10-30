@@ -35,3 +35,6 @@ out/
 
 ### VS Code ###
 .vscode/
+
+### Query.dsl ###
+**/src/main/generated/
