@@ -2,10 +2,8 @@ package com.wanted.socialintegratefreed.domain.feed.api;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -30,9 +28,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.context.WebApplicationContext;
@@ -40,9 +35,6 @@ import org.springframework.web.context.WebApplicationContext;
 
 @WebMvcTest(FeedController.class)
 public class FeedControllerTest extends AbstractRestDocsTests {
-
-  @Autowired
-  private MockMvc mockMvc;
 
   @Autowired
   private WebApplicationContext context;
@@ -63,13 +55,7 @@ public class FeedControllerTest extends AbstractRestDocsTests {
 
   @BeforeEach
   public void setUp() {
-    mockMvc = MockMvcBuilders
-        .webAppContextSetup(context)
-        .apply(SecurityMockMvcConfigurers.springSecurity()) // 스프링 시큐리티 설정 적용
-        .defaultRequest(post("/**").with(csrf()))
-        .defaultRequest(patch("/**").with(csrf()))
-        .defaultRequest(delete("/**").with(csrf()))
-        .build();
+
   }
 
 

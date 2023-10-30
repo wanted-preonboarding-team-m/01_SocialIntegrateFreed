@@ -17,12 +17,8 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
-import org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers;
-import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.context.WebApplicationContext;
 
 @WebMvcTest(UserController.class)
 @Import(WebSecurityConfig.class)
@@ -30,8 +26,7 @@ class UserControllerTest extends AbstractRestDocsTests {
 
   private static final String COMMON_URL = "/api/v1/user";
   private static final String FEED_URL = "/api/v1/feeds/**";
-  @Autowired
-  private WebApplicationContext context;
+
   @MockBean
   private JwtTokenProvider jwtTokenProvider;
 
@@ -43,18 +38,10 @@ class UserControllerTest extends AbstractRestDocsTests {
   @Autowired
   private final ObjectMapper objectMapper = new ObjectMapper();
 
-  @Autowired
-  private MockMvc mvc;
-
   private UserSignUpRequestDto userSignUpRequestDto;
 
   @BeforeEach
   void setUp() {
-
-    mockMvc = MockMvcBuilders
-        .webAppContextSetup(context)
-        .apply(SecurityMockMvcConfigurers.springSecurity()) // 스프링 시큐리티 설정 적용
-        .build();
     userSignUpRequestDto = UserSignUpRequestDto.builder()
         .password("asdf2cvzcv4t")
         .email("zxcvzxccccccc@naver.com")
