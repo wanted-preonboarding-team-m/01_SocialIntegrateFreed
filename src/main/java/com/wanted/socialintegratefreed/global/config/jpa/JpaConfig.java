@@ -1,4 +1,4 @@
-package com.wanted.socialintegratefreed.domain.user.config;
+package com.wanted.socialintegratefreed.global.config.jpa;
 
 
 import org.springframework.context.annotation.Configuration;

@@ -1,0 +1,53 @@
+== 유저
+
+=== 회원 가입
+
+Request
+
+include::{snippets}/user-controller-test/회원가입_컨트롤러_테스트/http-request.adoc[]
+
+Response
+
+- 200 OK
+
+include::{snippets}/user-controller-test/회원가입_컨트롤러_테스트/http-response.adoc[]
+
+=== 로그인
+
+Request
+
+include::{snippets}/user-controller-test/로그인_컨트롤러_테스트/http-request.adoc[]
+
+Response
+
+- 200 OK
+
+include::{snippets}/user-controller-test/로그인_컨트롤러_테스트/http-response.adoc[]
+
+=== 인증번호 발급
+
+Request
+
+include::{snippets}/user-controller-test/인증번호_컨트롤러/http-request.adoc[]
+
+Response
+
+- 200 OK
+
+include::{snippets}/user-controller-test/인증번호_컨트롤러/http-response.adoc[]
+
+=== 사용자 인증
+
+Request
+
+include::{snippets}/user-controller-test/인증된_사용자인_경우_200/http-request.adoc[]
+
+Response
+
+- 200 OK
+
+include::{snippets}/user-controller-test/인증된_사용자인_경우_200/http-response.adoc[]
+
+- 403 Forbidden
+include::{snippets}/user-controller-test/인증된_사용자가_아닌경우_401에러/http-response.adoc[]
+

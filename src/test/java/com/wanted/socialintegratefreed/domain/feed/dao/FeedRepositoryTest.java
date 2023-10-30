@@ -13,10 +13,10 @@ import com.wanted.socialintegratefreed.domain.hashtag.dao.HashtagRepository;
 import com.wanted.socialintegratefreed.domain.hashtag.entity.Hashtag;
 import com.wanted.socialintegratefreed.domain.tagmatching.dao.TagMatchingRepository;
 import com.wanted.socialintegratefreed.domain.tagmatching.entity.TagMatching;
-import com.wanted.socialintegratefreed.domain.user.config.JpaConfig;
-import com.wanted.socialintegratefreed.domain.user.constant.UserEnable;
 import com.wanted.socialintegratefreed.domain.user.dao.UserRepository;
 import com.wanted.socialintegratefreed.domain.user.entity.User;
+import com.wanted.socialintegratefreed.domain.user.entity.UserEnable;
+import com.wanted.socialintegratefreed.global.config.jpa.JpaConfig;
 import java.time.LocalDateTime;
 import java.util.NoSuchElementException;
 import org.junit.jupiter.api.DisplayName;
@@ -29,7 +29,7 @@ import org.springframework.context.annotation.Import;
 @Import(JpaConfig.class) // Auditing 기능을 사용하기 위해 JpaConfig를 import
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-public class FeedRepositoryTest{
+public class FeedRepositoryTest {
 
   @Autowired
   private FeedRepository feedRepository;
@@ -51,14 +51,15 @@ public class FeedRepositoryTest{
   public void 게시글_저장() {
     // Given
     User user = createUser("test@example.com", "1234");
-    FeedCreateRequest request = createFeedRequest("Test title", "Test content", FeedType.INSTAGRAM , user);
+    FeedCreateRequest request = createFeedRequest("Test title", "Test content", FeedType.INSTAGRAM,
+        user);
 
     // When
     Feed feed = feedRepository.save(request.toEntity(user));
 
     // Then
     feedRepository.findById(feed.getFeedId())
-            .orElseThrow(() -> new NoSuchElementException());
+        .orElseThrow(() -> new NoSuchElementException());
 
   }
 
@@ -179,7 +180,7 @@ public class FeedRepositoryTest{
   /**
    * 사용자 생성
    *
-   * @param email 사용자 id
+   * @param email    사용자 id
    * @param password 사용자 비밀번호
    * @return
    */
@@ -191,10 +192,10 @@ public class FeedRepositoryTest{
   /**
    * 게시물 생성
    *
-   * @param title 게시물 제목
+   * @param title   게시물 제목
    * @param content 게시물 내용
-   * @param type 게시글의 유형
-   * @param user 게시물을 작성한 사용자
+   * @param type    게시글의 유형
+   * @param user    게시물을 작성한 사용자
    * @return Feed
    */
   private Feed createFeed(String title, String content, FeedType type, User user) {
@@ -215,13 +216,14 @@ public class FeedRepositoryTest{
   /**
    * 게시물 생성 요청 dto
    *
-   * @param title 저장할 게시물 제목
+   * @param title   저장할 게시물 제목
    * @param content 저장할 게시물 내용
-   * @param type 저장할 게시물 타입
-   * @param user 게시물 작성 사용자
+   * @param type    저장할 게시물 타입
+   * @param user    게시물 작성 사용자
    * @return FeedCreateRequest dto
    */
-  private FeedCreateRequest createFeedRequest(String title, String content, FeedType type, User user) {
+  private FeedCreateRequest createFeedRequest(String title, String content, FeedType type,
+      User user) {
     return FeedCreateRequest.builder()
         .userId(user.getUserId())
         .title(title)
