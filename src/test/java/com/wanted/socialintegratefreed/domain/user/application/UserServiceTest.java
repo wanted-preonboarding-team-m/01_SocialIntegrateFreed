@@ -40,8 +40,9 @@ public class UserServiceTest {
 
   private static final String TEST_EMAIL = "test@example.com";
   private static final String SECRET_KEY = "socialIntegrateFreedwantedMsocialIntegrateFreedapplication2023secret";
-
+  private static final int MAX_INACTIVATE_INTERVAL = 0;
   private static final long EXPIRES = 3600000;
+
   @Mock
   private JwtTokenProvider jwtTokenProvider;
   @InjectMocks
@@ -92,22 +93,20 @@ public class UserServiceTest {
     }
 
     @Test
-    @DisplayName("사용자 세션 저장소에 저장되면서 60초 이후 삭제 된다.")
-    void 사용자_세션_저장소에_저장되면서_60초_이후_데이터가_삭제_된다() throws InterruptedException {
+    @DisplayName("사용자 세션 저장소에 저장되면서 x초 이후 삭제 된다.")
+    void 사용자_세션_저장소에_저장되면서_x초_이후_데이터가_삭제_된다() throws InterruptedException {
       //given
       Map<String, Object> userMap = new HashMap<>();
       userMap.put("email", "john@example.com");
       when(httpServletRequest.getSession()).thenReturn(httpSession);
 
-      int MAX_INACTIVATE_INTERVAL = 60;
-
       //when
-      userService.storeUserInSession(userMap, httpServletRequest);
+      userService.storeUserInSession(userMap, httpServletRequest, 0);
 
       verify(httpSession).setAttribute(eq("user"), eq(userMap));
       verify(httpSession).setMaxInactiveInterval(eq(MAX_INACTIVATE_INTERVAL));
 
-      Thread.sleep(60000); // 60초 대기
+      Thread.sleep(MAX_INACTIVATE_INTERVAL * 1000 + 1); // x초 대기
 
       //then
       Object sessionData = httpSession.getAttribute("user");

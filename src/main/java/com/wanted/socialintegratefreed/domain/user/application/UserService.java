@@ -63,17 +63,21 @@ public class UserService {
 
     userSessionMap.put("user", saveUser); //map에 담을 "user"라는 키 , 값으로는 db에 저장한 user값
     userSessionMap.put("authCode", authCode); // map에 "authCode"라는 키,값으로는 발급된 랜덤 6자리 저장
-    storeUserInSession(userSessionMap, httpServletRequest); // 세션에 저장된 값을 저장
+    storeUserInSession(userSessionMap, httpServletRequest,
+        MAX_INACTIVATE_INTERVAL); // 세션에 저장된 값을 저장
 
     return authCode;
   }
 
   //세션 저장소
-  public void storeUserInSession(Map<String, Object> userMap,
-      HttpServletRequest httpServletRequest) {
+  public void storeUserInSession(
+      Map<String, Object> userMap,
+      HttpServletRequest httpServletRequest,
+      int maxInactivateInterval
+  ) {
     HttpSession httpSession = httpServletRequest.getSession(); // 세션을 가져와서
     httpSession.setAttribute("user", userMap); // 유저라는
-    httpSession.setMaxInactiveInterval(MAX_INACTIVATE_INTERVAL); // 세션에 60초동안 저장
+    httpSession.setMaxInactiveInterval(maxInactivateInterval); // 세션에 60초동안 저장
   }
 
   /**
@@ -204,7 +208,7 @@ public class UserService {
     userMap.put("authCode", code);
     userMap.put("user", existEmailReturnUser(email));
     servletRequest.setAttribute("authCode", userMap);
-    storeUserInSession(userMap, servletRequest);
+    storeUserInSession(userMap, servletRequest, MAX_INACTIVATE_INTERVAL);
     return UserResponseAuthCodeDto.builder()
         .code(code).build();
   }
