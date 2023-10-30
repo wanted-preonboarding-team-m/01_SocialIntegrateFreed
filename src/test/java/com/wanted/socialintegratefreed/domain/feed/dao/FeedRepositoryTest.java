@@ -19,9 +19,7 @@ import com.wanted.socialintegratefreed.domain.user.dao.UserRepository;
 import com.wanted.socialintegratefreed.domain.user.entity.User;
 import java.time.LocalDateTime;
 import java.util.NoSuchElementException;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -47,12 +45,6 @@ public class FeedRepositoryTest{
 
   private Feed feed;
   private User user;
-
-  @AfterEach
-  public void cleanup() {
-    feedRepository.deleteAll();
-    userRepository.deleteAll();
-  }
 
   @DisplayName("게시글이 성공적으로 저장된다.")
   @Test
