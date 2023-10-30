@@ -1,7 +1,6 @@
 package com.wanted.socialintegratefreed.domain.user.entity;
 
 import com.wanted.socialintegratefreed.domain.feed.entity.Feed;
-import com.wanted.socialintegratefreed.domain.user.constant.UserEnable;
 import com.wanted.socialintegratefreed.global.entity.BaseTimeEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -25,32 +24,32 @@ import lombok.NoArgsConstructor;
 @Table(name = "user")
 public class User extends BaseTimeEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "user_id", nullable = false)
-    private Long userId;
-    @Column(name = "email", nullable = false)
-    private String email;
-    @Column(name = "password", nullable = false)
-    private String password;
-    @Column(name = "enabled")
-    @Enumerated(EnumType.STRING)
-    private UserEnable userEnable = UserEnable.USER_DISABLED;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Column(name = "user_id", nullable = false)
+  private Long userId;
+  @Column(name = "email", nullable = false)
+  private String email;
+  @Column(name = "password", nullable = false)
+  private String password;
+  @Column(name = "enabled")
+  @Enumerated(EnumType.STRING)
+  private UserEnable userEnable = UserEnable.USER_DISABLED;
 
-    // 'Feed'엔티티와 일대다 관계 설정
-    @OneToMany(mappedBy = "user")
-    private List<Feed> feeds = new ArrayList<>();
+  // 'Feed'엔티티와 일대다 관계 설정
+  @OneToMany(mappedBy = "user")
+  private List<Feed> feeds = new ArrayList<>();
 
-    @Builder
-    public User(Long userId, String email, String password, UserEnable userEnable) {
-        this.userId = userId;
-        this.email = email;
-        this.password = password;
-        this.userEnable = userEnable;
-    }
+  @Builder
+  public User(Long userId, String email, String password, UserEnable userEnable) {
+    this.userId = userId;
+    this.email = email;
+    this.password = password;
+    this.userEnable = userEnable;
+  }
 
-    public void updateEnableUser(UserEnable userEnable) {
-        this.userEnable = userEnable;
+  public void updateEnableUser(UserEnable userEnable) {
+    this.userEnable = userEnable;
 
-    }
+  }
 }

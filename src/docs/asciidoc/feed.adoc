@@ -1,0 +1,75 @@
+== 피드
+
+=== 피드 생성
+
+Request
+
+include::{snippets}/feed-controller-test/게시물_생성/http-request.adoc[]
+
+Response
+
+- 201 Created
+
+include::{snippets}/feed-controller-test/게시물_생성/http-response.adoc[]
+
+=== 피드 수정
+
+Request
+
+include::{snippets}/feed-controller-test/게시물_수정/http-request.adoc[]
+
+Response
+
+- 200 OK
+
+include::{snippets}/feed-controller-test/게시물_수정/http-response.adoc[]
+
+=== 피드 상세 조회
+
+Request
+
+include::{snippets}/feed-controller-test/게시물_상세_조회/http-request.adoc[]
+
+Response
+
+- 200 OK
+
+include::{snippets}/feed-controller-test/게시물_상세_조회/http-response.adoc[]
+
+=== 피드 좋아요
+
+Request
+
+include::{snippets}/feed-controller-test/게시물_좋아요/http-request.adoc[]
+
+Response
+
+- 200 OK
+
+include::{snippets}/feed-controller-test/게시물_좋아요/http-response.adoc[]
+
+
+=== 피드 삭제
+
+Request
+
+include::{snippets}/feed-controller-test/게시물_삭제/http-request.adoc[]
+
+Response
+
+- 200 OK
+
+include::{snippets}/feed-controller-test/게시물_삭제/http-response.adoc[]
+
+
+=== 피드 공유
+
+Request
+
+include::{snippets}/feed-controller-test/게시물_공유/http-request.adoc[]
+
+Response
+
+- 200 OK
+
+include::{snippets}/feed-controller-test/게시물_공유/http-response.adoc[]
