@@ -8,6 +8,7 @@
 5. [ERD](#ERD)
 6. [구현 과정](#구현-과정)
 7. [담당한 역할](#담당한-역할)
+8. [테스트](#테스트)
 
 ## 개발 기간
 2023-10-25 ~ 2023-10-30
@@ -70,3 +71,9 @@
 * [김선재](https://github.com/mizuirohoshi7): 통계, 좋아요 및 공유 기능
 * [최소영](https://github.com/soyeong125): 게시물 CRUD
 * 코드 리뷰 및 리팩토링은 조원 모두가 함께 했습니다.
+
+## 테스트
+<img width="347" alt="2" src="https://github.com/wanted-preonboarding-team-m/01_SocialIntegrateFreed/assets/142835195/a9488331-001e-486c-bf7c-67872496d36e">
+<img width="343" alt="1" src="https://github.com/wanted-preonboarding-team-m/01_SocialIntegrateFreed/assets/142835195/7db6ce75-5b88-4718-835f-81c7d25e0a0c">
+
+단위 테스트로 각 계층을 분리했습니다.
