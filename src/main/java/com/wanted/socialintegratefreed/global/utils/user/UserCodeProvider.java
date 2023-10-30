@@ -1,4 +1,4 @@
-package com.wanted.socialintegratefreed.global.utils;
+package com.wanted.socialintegratefreed.global.utils.user;
 
 import java.util.concurrent.ThreadLocalRandom;
 
